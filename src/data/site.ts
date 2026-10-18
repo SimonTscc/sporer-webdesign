@@ -17,7 +17,7 @@ export const site = {
   // [SWAP] Empfänger der Kontaktformulare (Versand über formsubmit.co, die Seite hat keinen eigenen Server).
   // Erst die eigene Adresse eintragen, einmal absenden, Bestätigungsmail anklicken, dann hier den
   // Zufallscode aus der FormSubmit-Mail eintragen, damit die Adresse nicht öffentlich im Code steht.
-  formTo: 'info@sporer-webdesign.de',
+  formTo: 'd301b39892b2db0b90c7645825ad99e0', // FormSubmit-Code für info@sporer-webdesign.de
   street: 'Musterstraße 1', // [SWAP]
   zip: '70000', // [SWAP]
   city: 'Stuttgart', // [SWAP]
