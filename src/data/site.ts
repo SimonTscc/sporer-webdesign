@@ -11,9 +11,11 @@ export const site = {
     'Webdesign aus Stuttgart: individuelle Websites und Web-Apps für Selbstständige, Vereine und kleine Unternehmen. Ruhiges Design, schnelle Technik, persönliche Betreuung.',
   url: 'https://sporer-webdesign.de', // [SWAP] Domain
   email: 'info@sporer-webdesign.de',
-  phone: '+49 170 000 00 00', // [SWAP]
-  phoneHref: '+491700000000', // [SWAP] gleiche Nummer ohne Leerzeichen
-  whatsapp: '491700000000', // [SWAP] Nummer für wa.me (ohne +)
+  // [SWAP] Geschäftsnummer, sobald die zweite Nummer da ist. Leer = Telefon und WhatsApp werden
+  // überall ausgeblendet (Kopf, Karte, Aufmaß, unten, Fußzeile, Impressum).
+  phone: '', // z. B. '+49 170 123 45 67'
+  phoneHref: '', // gleiche Nummer ohne Leerzeichen, z. B. '+491701234567'
+  whatsapp: '', // Nummer für wa.me ohne +, z. B. '491701234567'
   // [SWAP] Empfänger der Kontaktformulare (Versand über formsubmit.co, die Seite hat keinen eigenen Server).
   // Erst die eigene Adresse eintragen, einmal absenden, Bestätigungsmail anklicken, dann hier den
   // Zufallscode aus der FormSubmit-Mail eintragen, damit die Adresse nicht öffentlich im Code steht.

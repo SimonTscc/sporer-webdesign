@@ -29,6 +29,10 @@ const b0 = aufmass.branchen[0];
           <span class="ql">Was machen Sie?</span>
           <select class="ln" data-k="branche">{aufmass.branchen.map((b) => <option value={b.id}>{b.label}</option>)}</select>
         </label>
+        <label class="q other" data-o="otherWrap" hidden>
+          <span class="ql">Was genau?</span>
+          <input class="ln" data-k="other" type="text" placeholder="z. B. Fotograf, Hundeschule, Kosmetikstudio" />
+        </label>
 
         <fieldset class="q">
           <legend class="ql">Wie groß soll es werden?</legend>
@@ -120,21 +124,19 @@ const b0 = aufmass.branchen[0];
     </div>
 
     <div class="send-area">
-          <button class="btn btn-ink" data-o="open" type="button">Dieses Aufmaß an Simon schicken</button>
-          <p class="hint">Sie bekommen innerhalb von zwei Werktagen einen Festpreis. Die Zahlen hier sind Richtwerte.</p>
-          <div class="lead" data-o="lead" hidden>
-            <h3>Fast fertig.</h3>
-            <p>Ihre Auswahl schicke ich mit. Wie erreiche ich Sie am besten?</p>
+          <div class="lead" data-o="lead">
+            <h3>Wie erreiche ich Sie?</h3>
+            <p>Ihre Auswahl von oben schicke ich mit. Sie bekommen innerhalb von zwei Werktagen einen Festpreis, die Zahlen oben sind Richtwerte.</p>
             <div class="f">
               <label><span>Ihr Name</span><input data-k="lname" type="text" autocomplete="name" /></label>
               <label><span>E-Mail</span><input data-k="lcontact" type="email" autocomplete="email" /></label>
               <label><span>Telefon (optional)</span><input data-k="ltel" type="tel" autocomplete="tel" /></label>
               <label class="full"><span>Noch etwas, das ich wissen sollte? (optional)</span><textarea data-k="lmsg" rows="3" placeholder="z. B. alte Website, Wunschtermin, Ideen"></textarea></label>
             </div>
-            <p class="err" role="alert" hidden>Bitte tragen Sie eine gültige E-Mail ein.</p>
+            <p class="err" role="alert" hidden>Bitte tragen Sie Ihren Namen und eine gültige E-Mail ein.</p>
             <div class="send">
-              <button class="btn btn-sand" data-o="mail" type="button">Aufmaß abschicken</button>
-              <button class="btn ghost" data-o="wa" type="button">Lieber per WhatsApp</button>
+              <button class="btn btn-sand" data-o="mail" type="button">Aufmaß an Simon schicken</button>
+              {site.whatsapp && <button class="btn ghost" data-o="wa" type="button">Lieber per WhatsApp</button>}
             </div>
           </div>
           <div class="lead done" data-o="done" hidden>
@@ -308,8 +310,13 @@ const b0 = aufmass.branchen[0];
     function update() {
       const name = k('name').value.trim();
       const brSel = k<HTMLSelectElement>('branche');
-      const h = branchen.find((b) => b.id === brSel.value) ?? branchen[0];
-      o('sName').textContent = name || `Ihr ${h.word}`;
+      const found = branchen.find((b) => b.id === brSel.value) ?? branchen[0];
+      const otherText = k('other').value.trim();
+      const isOther = found.id === 'sonstiges';
+      o('otherWrap').hidden = !isOther;
+      const h = isOther && otherText ? { ...found, word: otherText, head: `${otherText} in Stuttgart` } : found;
+      const fallback = isOther && otherText ? otherText : `Ihr ${h.word}`;
+      o('sName').textContent = name || fallback;
       o('url').textContent = `www.${slug(name) || 'ihr-betrieb'}.de`;
       o('mark').textContent = (name || h.word).charAt(0).toUpperCase();
       o('sHead').textContent = name ? `${name}${h.id === 'coach' ? ', Coaching aus Stuttgart' : ' in Stuttgart'}` : h.head;
@@ -333,7 +340,7 @@ const b0 = aufmass.branchen[0];
       o('adminTag').classList.toggle('on', on('admin'));
       root.querySelector('.site')!.classList.toggle('editable', on('admin'));
       o('card').classList.toggle('on', on('print'));
-      o('cardName').textContent = name || `Ihr ${h.word}`;
+      o('cardName').textContent = name || fallback;
       o('pages').classList.toggle('on', base.value === 'multi');
       o('app').classList.toggle('on', base.value === 'app');
       o('bTermin').classList.toggle('on', on('termin'));
@@ -352,13 +359,14 @@ const b0 = aufmass.branchen[0];
       o('sum2').textContent = sumText;
       o('monthly').textContent = monthly ? `dazu ${monthly} € im Monat, monatlich kündbar` : 'einmalig, keine laufenden Kosten';
 
-      return { name, branche: brSel.selectedOptions[0].text, base: label(base), extras, total, monthly, unsure };
+      return { name, branche: isOther ? `Sonstiges: ${otherText || 'nicht angegeben'}` : brSel.selectedOptions[0].text, base: label(base), extras, total, monthly, unsure };
     }
 
     // Was in der Skizze zu welcher Auswahl gehört
     const targets: Record<string, () => HTMLElement[]> = {
       name: () => [o('sName'), o('url')],
       branche: () => [o('sHead')],
+      other: () => [o('sHead'), o('sName')],
       one: () => [root.querySelector<HTMLElement>('.s-hero')!],
       multi: () => [o('pages'), root.querySelector<HTMLElement>('.s-nav')!],
       app: () => [o('app')],
@@ -383,14 +391,13 @@ const b0 = aufmass.branchen[0];
       update();
       const key = t.dataset.k ?? t.value;
       const els = targets[key]?.().filter((el) => el.offsetParent !== null) ?? [];
-      if (key === 'name') { clearTimeout(typing); typing = window.setTimeout(() => flash(els), 250); }
+      if (key === 'name' || key === 'other') { clearTimeout(typing); typing = window.setTimeout(() => flash(els), 250); }
       else if (!(t instanceof HTMLInputElement && t.type === 'checkbox' && !t.checked)) flash(els);
     }
     root.addEventListener('input', changed);
     root.addEventListener('change', (e) => { if ((e.target as HTMLElement).tagName === 'SELECT') return; update(); });
     update();
 
-    o('open').addEventListener('click', () => { o('lead').hidden = false; k('lname').focus(); });
 
     function message() {
       const c = update();
@@ -409,14 +416,15 @@ const b0 = aufmass.branchen[0];
       ].join('\n');
     }
     function ready() {
-      const ok = /^\S+@\S+\.\S+$/.test(k('lcontact').value.trim());
+      const nameOk = !!k('lname').value.trim();
+      const mailOk = /^\S+@\S+\.\S+$/.test(k('lcontact').value.trim());
       const e = o('lead').querySelector<HTMLElement>('.err')!;
-      e.textContent = 'Bitte tragen Sie eine gültige E-Mail ein.';
-      e.hidden = ok;
-      if (!ok) k('lcontact').focus();
-      return ok;
+      e.textContent = 'Bitte tragen Sie Ihren Namen und eine gültige E-Mail ein.';
+      e.hidden = nameOk && mailOk;
+      if (!nameOk) k('lname').focus(); else if (!mailOk) k('lcontact').focus();
+      return nameOk && mailOk;
     }
-    o('wa').addEventListener('click', () => { if (ready()) window.open(`https://wa.me/${root.dataset.wa}?text=${encodeURIComponent(message())}`, '_blank', 'noopener'); });
+    root.querySelector('[data-o="wa"]')?.addEventListener('click', () => { if (ready()) window.open(`https://wa.me/${root.dataset.wa}?text=${encodeURIComponent(message())}`, '_blank', 'noopener'); });
     const mailBtn = o('mail') as HTMLButtonElement;
     mailBtn.addEventListener('click', async () => {
       if (!ready()) return;
@@ -434,10 +442,10 @@ const b0 = aufmass.branchen[0];
           Richtwert: `${c.unsure ? 'nach Gespräch' : `ab ${fmt(c.total)}`}${c.monthly ? ` + ${c.monthly} € / Monat` : ''}`,
           Nachricht: k<HTMLTextAreaElement>('lmsg').value.trim(),
         });
-        o('lead').hidden = true; o('open').style.display = 'none';
+        o('lead').hidden = true;
         o('done').hidden = false;
       } catch {
-        err.textContent = `Das hat leider nicht geklappt. Schicken Sie es bitte per WhatsApp oder schreiben Sie an ${root.dataset.mail}.`;
+        err.textContent = `Das hat leider nicht geklappt. Schreiben Sie mir bitte direkt an ${root.dataset.mail}.`;
         err.hidden = false;
         mailBtn.disabled = false; mailBtn.textContent = 'Aufmaß abschicken';
       }

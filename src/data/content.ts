@@ -97,5 +97,6 @@ export const aufmass = {
     { id: 'gastro', label: 'Café, Restaurant, Laden', word: 'Café', head: 'Ihr Café in Stuttgart', text: 'Frühstück ab acht, Kuchen aus eigener Backstube und Kaffee von einer Rösterei um die Ecke.', cta: 'Tisch reservieren', hours: 'Öffnungszeiten' },
     { id: 'coach', label: 'Coaching oder Beratung', word: 'Coaching', head: 'Coaching aus Stuttgart', text: 'Ich begleite Sie persönlich, online oder vor Ort. Das erste Gespräch ist kostenlos.', cta: 'Erstgespräch buchen', hours: 'Termine' },
     { id: 'verein', label: 'Verein', word: 'Verein', head: 'Ihr Verein in Stuttgart', text: 'Training dienstags und donnerstags ab 18 Uhr. Schauen Sie gern unverbindlich vorbei.', cta: 'Probetraining', hours: 'Trainingszeiten' },
+    { id: 'sonstiges', label: 'Sonstiges', word: 'Betrieb', head: 'Ihr Betrieb in Stuttgart', text: 'Hier steht in zwei Sätzen, was Sie machen und für wen. Darunter geht es direkt zur Anfrage.', cta: 'Kontakt aufnehmen', hours: 'Öffnungszeiten' },
   ],
 };

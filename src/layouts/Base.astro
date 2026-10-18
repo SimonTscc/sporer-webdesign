@@ -24,7 +24,7 @@ const jsonLd = {
   founder: { '@type': 'Person', name: site.owner },
   url: site.url,
   email: site.email,
-  telephone: site.phoneHref,
+  telephone: site.phoneHref || undefined,
   image: new URL(href('/brand/icon-512.png'), Astro.site).href,
   logo: new URL(href('/brand/logo.svg'), Astro.site).href,
   description: site.description,

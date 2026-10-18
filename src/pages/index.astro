@@ -54,13 +54,15 @@ const faqLd = {
     <div class="rule"><i></i></div>
     <div class="talk-in">
       <div>
-        <h2>Lieber erst reden?</h2>
-        <p class="muted">Rufen Sie an oder schreiben Sie mir bei WhatsApp. Das erste Gespräch ist kostenlos.</p>
+        <h2>{site.phone ? 'Lieber erst reden?' : 'Noch Fragen?'}</h2>
+        <p class="muted">{site.phone ? 'Rufen Sie an oder schreiben Sie mir bei WhatsApp. Das erste Gespräch ist kostenlos.' : 'Schreiben Sie mir eine Mail. Ich antworte innerhalb von einem Werktag, das erste Gespräch ist kostenlos.'}</p>
       </div>
       <div class="ways">
-        <a class="phone" href={`tel:${site.phoneHref}`}>{site.phone}</a>
+        {site.phone
+          ? <a class="phone" href={`tel:${site.phoneHref}`}>{site.phone}</a>
+          : <a class="phone" href={`mailto:${site.email}`}>{site.email}</a>}
         <div class="btns">
-          <a class="btn btn-ink" href={`https://wa.me/${site.whatsapp}`} rel="noopener">WhatsApp</a>
+          {site.whatsapp && <a class="btn btn-ink" href={`https://wa.me/${site.whatsapp}`} rel="noopener">WhatsApp</a>}
           <a class="btn btn-line" href="#aufmass">Doch lieber das Aufmaß</a>
         </div>
       </div>
@@ -91,6 +93,6 @@ const faqLd = {
   @media (min-width: 900px) { .talk-in { grid-template-columns: 1fr 1fr; } }
   .talk h2 { margin-bottom: 10px; }
   .ways { display: grid; gap: 16px; justify-items: start; }
-  .phone { font-family: var(--serif); font-size: clamp(1.7rem, 1.3rem + 1.4vw, 2.5rem); text-decoration: none; }
+  .phone { font-family: var(--serif); font-size: clamp(1.4rem, 1.1rem + 1.4vw, 2.5rem); text-decoration: none; overflow-wrap: anywhere; }
   .btns { display: flex; flex-wrap: wrap; gap: 10px; }
 </style>

@@ -10,7 +10,7 @@ const year = new Date().getFullYear();
       <Logo withCity />
     </div>
     <div>
-      <p><a href={`tel:${site.phoneHref}`}>{site.phone}</a><br /><a href={`mailto:${site.email}`}>{site.email}</a><br /><a href={`https://wa.me/${site.whatsapp}`} rel="noopener">WhatsApp</a></p>
+      <p>{site.phone && <><a href={`tel:${site.phoneHref}`}>{site.phone}</a><br /></>}<a href={`mailto:${site.email}`}>{site.email}</a>{site.whatsapp && <><br /><a href={`https://wa.me/${site.whatsapp}`} rel="noopener">WhatsApp</a></>}</p>
       <p class="muted">{site.owner}<br />{site.street}<br />{site.zip} {site.city}</p>
     </div>
     <ul>{nav.map((n) => <li><a href={href(n.href)}>{n.label}</a></li>)}</ul>

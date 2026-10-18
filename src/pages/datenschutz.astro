@@ -6,7 +6,7 @@ import { site, isPreview } from '../data/site';
   {isPreview && <p class="todo">[SWAP] Vorlage: Hosting-Anbieter eintragen und die Erklärung vor dem Livegang mit einem Generator (z. B. e-recht24) oder einer Fachperson abgleichen.</p>}
 
   <h2>1. Verantwortlicher</h2>
-  <p>{site.owner} · {site.name}<br />{site.street}, {site.zip} {site.city}<br />E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a> · Telefon: {site.phone}</p>
+  <p>{site.owner} · {site.name}<br />{site.street}, {site.zip} {site.city}<br />E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a>{site.phone && ` · Telefon: ${site.phone}`}</p>
 
   <h2>2. Grundsätze</h2>
   <p>Diese Website kommt ohne Cookies, ohne Tracking und ohne Analyse-Tools aus. Schriften werden lokal von diesem Server geladen; es findet keine Verbindung zu Google Fonts oder anderen Drittanbietern statt.</p>

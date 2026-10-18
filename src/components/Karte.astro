@@ -42,8 +42,8 @@ const short = [
       <div class="panel p1" id="kP1">
         <div class="face inside1">
           <div><p class="nm">{site.owner}</p><p class="who">Webdesign aus {site.city}</p></div>
-          <div><a class="l" href={`tel:${site.phoneHref}`}>{site.phone}</a><a class="l" href={`mailto:${site.email}`}>{site.email}</a></div>
-          <div class="acts"><button class="mini" id="kVcf" type="button">Nummer speichern</button><a class="mini o" href={`https://wa.me/${site.whatsapp}`} rel="noopener">WhatsApp</a></div>
+          <div>{site.phone && <a class="l" href={`tel:${site.phoneHref}`}>{site.phone}</a>}<a class="l" href={`mailto:${site.email}`}>{site.email}</a><a class="l" href="#aufmass">Anfrage über das Aufmaß</a></div>
+          <div class="acts"><button class="mini" id="kVcf" type="button">Kontakt speichern</button>{site.whatsapp && <a class="mini o" href={`https://wa.me/${site.whatsapp}`} rel="noopener">WhatsApp</a>}</div>
         </div>
         <div class="face back cover" aria-hidden="true">
           <Logo withCity />
@@ -191,7 +191,7 @@ const short = [
   document.getElementById('kVcf')!.addEventListener('click', () => {
     const d = stage.dataset;
     const [first, ...rest] = (d.name ?? '').split(' ');
-    const v = ['BEGIN:VCARD', 'VERSION:3.0', `N:${rest.join(' ')};${first};;;`, `FN:${d.name}`, `ORG:${d.org}`, `TEL;TYPE=CELL:${d.tel}`, `EMAIL:${d.mail}`, `URL:${d.url}`, `ADR;TYPE=WORK:;;;${d.city};;;Deutschland`, 'END:VCARD'].join('\r\n');
+    const v = ['BEGIN:VCARD', 'VERSION:3.0', `N:${rest.join(' ')};${first};;;`, `FN:${d.name}`, `ORG:${d.org}`, ...(d.tel ? [`TEL;TYPE=CELL:${d.tel}`] : []), `EMAIL:${d.mail}`, `URL:${d.url}`, `ADR;TYPE=WORK:;;;${d.city};;;Deutschland`, 'END:VCARD'].join('\r\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([v], { type: 'text/vcard' }));
     a.download = `${(d.name ?? 'Kontakt').replace(/\s+/g, '-')}.vcf`;
