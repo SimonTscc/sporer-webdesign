@@ -74,6 +74,7 @@ export const aufmass = {
     { id: 'one', title: 'Eine Seite', note: 'Alles Wichtige untereinander: Leistungen, Kontakt, Anfahrt', price: 490 },
     { id: 'multi', title: 'Mehrere Seiten', note: 'Bis etwa sechs Unterseiten, z. B. je Leistung eine', price: 890 },
     { id: 'app', title: 'Web-App', note: 'Mit Login und Datenbank, z. B. Ergebnislisten oder Anmeldungen', price: 1190 },
+    { id: 'unsure', title: 'Weiß ich noch nicht', note: 'Beraten Sie mich, wir finden es zusammen heraus', price: 0 },
   ],
   extras: [
     { id: 'termin', title: 'Termine online buchen', note: 'Kunden wählen selbst einen freien Termin', price: 120 }, // [SWAP]

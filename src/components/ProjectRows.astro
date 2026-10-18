@@ -1,5 +1,4 @@
 ---
-import { href } from '../lib/url';
 // Projekte als Zeilen. Der Screenshot ist die ganze Seite: mit der Maus darüber scrollt er langsam durch.
 import { Image } from 'astro:assets';
 import { projects } from '../data/projects';
@@ -7,13 +6,13 @@ import { projects } from '../data/projects';
 <ul class="rows">
   {projects.map((p) => (
     <li class="row">
-      <a href={href(`/arbeiten/${p.slug}`)} class:list={['shot', { phones: p.mobile }]} tabindex="-1" aria-hidden="true">
+      <div class:list={['shot', { phones: p.mobile }]}>
         {p.mobile
           ? p.images.map((img) => <Image src={img} alt="" widths={[260, 520]} sizes="200px" />)
           : <Image src={p.images[0]} alt="" widths={[640, 1100]} sizes="(min-width: 900px) 640px, 92vw" />}
-      </a>
+      </div>
       <div class="txt">
-        <h3><a href={href(`/arbeiten/${p.slug}`)}>{p.client}</a></h3>
+        <h3>{p.client}</h3>
         <p class="kind">{p.kind} · {p.place} · {p.year}</p>
         <p>{p.summary}</p>
         {p.url && <p class="live">Online unter <a href={p.url} rel="noopener">{p.url.replace(/^https?:\/\/(www\.)?/, '')}</a></p>}
@@ -34,8 +33,6 @@ import { projects } from '../data/projects';
   .shot.phones :global(img) { width: auto; height: 100%; border-radius: 14px; box-shadow: 0 0 0 1.5px var(--ink); transition: none; transform: none; }
   @media (max-width: 899px) { .shot { --h: 280px; } }
   @media (hover: none) { .shot:not(.phones) { overflow-y: auto; overscroll-behavior: contain; } .shot:hover :global(img) { transform: none; } }
-  h3 a { text-decoration: none; }
-  h3 a:hover { text-decoration: underline; text-decoration-thickness: 1px; }
   .kind { color: var(--ink-2); font-size: .93rem; margin: 4px 0 12px; }
   .txt p:not(.kind) { max-width: 34em; }
   .live { font-size: .95rem; color: var(--ink-2); }

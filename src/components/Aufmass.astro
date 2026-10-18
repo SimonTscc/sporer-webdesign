@@ -38,7 +38,7 @@ const b0 = aufmass.branchen[0];
                 <input type="radio" name="am-base" value={b.id} data-price={b.price} checked={i === 0} />
                 <span class="box" aria-hidden="true"></span>
                 <span class="t">{b.title}<span class="n">{b.note}</span></span>
-                <span class="p">ab {eur(b.price)}</span>
+                <span class="p">{b.price ? `ab ${eur(b.price)}` : 'Beratung'}</span>
               </label>
             ))}
           </div>
@@ -333,14 +333,16 @@ const b0 = aufmass.branchen[0];
       o('lines').style.display = on('texte') ? 'none' : 'block';
       o('realtext').style.display = on('texte') ? 'block' : 'none';
       o('ph').classList.toggle('photo', on('fotos'));
-      o('dimH').textContent = base.value === 'multi' ? '6 Seiten' : base.value === 'app' ? 'mit Login' : '1 Seite';
+      o('dimH').textContent = base.value === 'multi' ? '6 Seiten' : base.value === 'app' ? 'mit Login' : base.value === 'unsure' ? 'noch offen' : '1 Seite';
       o('note2').textContent = on('care') ? 'ich halte das aktuell' : on('admin') ? 'das ändern Sie selbst' : '';
       o('note1').textContent = on('termin') ? 'Termine rund um die Uhr' : 'kommt aufs Handy!';
-      o('sum').textContent = `ab ${fmt(total)}`;
-      o('sum2').textContent = `ab ${fmt(total)}`;
+      const unsure = base.value === 'unsure';
+      const sumText = unsure ? 'nach Gespräch' : `ab ${fmt(total)}`;
+      o('sum').textContent = sumText;
+      o('sum2').textContent = sumText;
       o('monthly').textContent = monthly ? `dazu ${monthly} € im Monat, monatlich kündbar` : 'einmalig, keine laufenden Kosten';
 
-      return { name, branche: brSel.selectedOptions[0].text, base: label(base), extras, total, monthly };
+      return { name, branche: brSel.selectedOptions[0].text, base: label(base), extras, total, monthly, unsure };
     }
 
     // Was in der Skizze zu welcher Auswahl gehört
@@ -388,7 +390,7 @@ const b0 = aufmass.branchen[0];
         `Betrieb: ${c.name || '–'} (${c.branche})`,
         `Umfang: ${c.base}`,
         `Dazu: ${c.extras.join(', ') || 'nichts'}`,
-        `Richtwert: ab ${fmt(c.total)}${c.monthly ? ` + ${c.monthly} € / Monat` : ''}`, '',
+        `Richtwert: ${c.unsure ? 'nach Gespräch' : `ab ${fmt(c.total)}`}${c.monthly ? ` + ${c.monthly} € / Monat` : ''}`, '',
         ...(msg ? [msg, ''] : []),
         `E-Mail: ${k('lcontact').value.trim()}`,
         ...(k('ltel').value.trim() ? [`Telefon: ${k('ltel').value.trim()}`] : []),
@@ -411,14 +413,14 @@ const b0 = aufmass.branchen[0];
       const c = update();
       mailBtn.disabled = true; mailBtn.textContent = 'Wird gesendet …';
       try {
-        await sendMail(root.dataset.to ?? '', `Aufmaß: ${c.name || c.branche}, ab ${fmt(c.total)}`, {
+        await sendMail(root.dataset.to ?? '', `Aufmaß: ${c.name || c.branche}, ${c.unsure ? 'Beratung gewünscht' : `ab ${fmt(c.total)}`}`, {
           Name: k('lname').value.trim(),
           email: k('lcontact').value.trim(),
           Telefon: k('ltel').value.trim(),
           Betrieb: `${c.name || '–'} (${c.branche})`,
           Umfang: c.base,
           Extras: c.extras.join(', ') || 'nichts',
-          Richtwert: `ab ${fmt(c.total)}${c.monthly ? ` + ${c.monthly} € / Monat` : ''}`,
+          Richtwert: `${c.unsure ? 'nach Gespräch' : `ab ${fmt(c.total)}`}${c.monthly ? ` + ${c.monthly} € / Monat` : ''}`,
           Nachricht: k<HTMLTextAreaElement>('lmsg').value.trim(),
         });
         o('lead').hidden = true; o('open').style.display = 'none';

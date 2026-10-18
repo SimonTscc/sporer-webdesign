@@ -30,9 +30,9 @@ export const site = {
 };
 
 export const nav = [
-  { href: '/arbeiten', label: 'Arbeiten' },
-  { href: '/leistungen', label: 'Leistungen' },
-  { href: '/preise', label: 'Preise' },
-  { href: '/ueber-mich', label: 'Über mich' },
-  { href: '/fragen', label: 'Fragen' },
+  // Alles liegt auf der Startseite, das Menü springt nur zu den Abschnitten
+  { href: '/#aufmass', label: 'Aufmaß' },
+  { href: '/#arbeiten', label: 'Arbeiten' },
+  { href: '/#ablauf', label: 'Ablauf' },
+  { href: '/#fragen', label: 'Fragen' },
 ];

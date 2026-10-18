@@ -13,7 +13,7 @@ const year = new Date().getFullYear();
       <p><a href={`tel:${site.phoneHref}`}>{site.phone}</a><br /><a href={`mailto:${site.email}`}>{site.email}</a><br /><a href={`https://wa.me/${site.whatsapp}`} rel="noopener">WhatsApp</a></p>
       <p class="muted">{site.owner}<br />{site.street}<br />{site.zip} {site.city}</p>
     </div>
-    <ul>{nav.map((n) => <li><a href={href(n.href)}>{n.label}</a></li>)}<li><a href={href('/kontakt')}>Kontakt</a></li></ul>
+    <ul>{nav.map((n) => <li><a href={href(n.href)}>{n.label}</a></li>)}</ul>
     <ul><li><a href={href('/impressum')}>Impressum</a></li><li><a href={href('/datenschutz')}>Datenschutz</a></li></ul>
   </div>
   <div class="wrap"><div class="rule"><i></i></div></div>
