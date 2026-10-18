@@ -1,6 +1,6 @@
 ---
 // „Das Aufmaß“: Besucher stellen ihre Website selbst zusammen. Rechts zeichnet sich eine Skizze mit ihrem
-// Firmennamen mit, der Richtpreis steht darunter, und die Auswahl geht als WhatsApp oder Mail an mich.
+// Firmennamen mit, der Richtpreis steht darunter, und die Auswahl kommt per Mail (formsubmit.co) oder WhatsApp bei mir an.
 // Speichert nichts.
 import { aufmass } from '../data/content';
 import { site } from '../data/site';
@@ -12,7 +12,7 @@ const {
 const eur = (n: number) => n.toLocaleString('de-DE') + ' €';
 const b0 = aufmass.branchen[0];
 ---
-<section class="am" id="aufmass" data-aufmass data-wa={site.whatsapp} data-mail={site.email} data-branchen={JSON.stringify(aufmass.branchen)}>
+<section class="am" id="aufmass" data-aufmass data-wa={site.whatsapp} data-mail={site.email} data-to={site.formTo} data-branchen={JSON.stringify(aufmass.branchen)}>
   <div class="wrap">
     <div class="head">
       <h2>{title}</h2>
@@ -55,16 +55,24 @@ const b0 = aufmass.branchen[0];
                 <span class="p">{x.price ? `+ ${eur(x.price)}` : 'inklusive'}</span>
               </label>
             ))}
-            <label class="row">
-              <input type="checkbox" value={aufmass.care.id} data-monthly={aufmass.care.monthly} checked={aufmass.care.checked} />
-              <span class="box" aria-hidden="true"></span>
-              <span class="t">{aufmass.care.title}<span class="n">{aufmass.care.note}</span></span>
-              <span class="p">{aufmass.care.monthly} € / Monat</span>
-            </label>
+          </div>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend class="ql">Und nach dem Start?</legend>
+          <div class="rows">
+            {aufmass.after.map((a) => (
+              <label class="row radio">
+                <input type="radio" name="am-after" value={a.id} data-price={a.price ?? 0} data-monthly={a.monthly ?? 0} checked={a.checked} />
+                <span class="box" aria-hidden="true"></span>
+                <span class="t">{a.title}<span class="n">{a.note}</span></span>
+                <span class="p">{a.monthly ? `${a.monthly} € / Monat` : a.price ? `+ ${eur(a.price)}` : 'kostenlos'}</span>
+              </label>
+            ))}
           </div>
           <div class="sum" aria-live="polite">
             <span class="label">Ungefähr</span>
-            <span><span class="val" data-o="sum">ab {eur(aufmass.base[0].price)}</span><small data-o="monthly">dazu {aufmass.care.monthly} € im Monat, monatlich kündbar</small></span>
+            <span><span class="val" data-o="sum">ab {eur(aufmass.base[0].price)}</span><small data-o="monthly">dazu {aufmass.after[0].monthly} € im Monat, monatlich kündbar</small></span>
           </div>
         </fieldset>
 
@@ -76,7 +84,7 @@ const b0 = aufmass.branchen[0];
           <div class="dim top"><span>für Handy und Rechner</span></div>
           <div class="dim left"><span data-o="dimH">1 Seite</span></div>
           <div class="sheet">
-            <div class="bar"><i></i><i></i><i></i><span class="url" data-o="url">www.ihr-betrieb.de</span><span class="care-tag" data-o="careTag">betreut</span></div>
+            <div class="bar"><i></i><i></i><i></i><span class="url" data-o="url">www.ihr-betrieb.de</span><span class="care-tag" data-o="careTag">betreut</span><span class="care-tag admin-tag" data-o="adminTag">✎ Admin</span></div>
             <div class="site">
               <div class="s-head">
                 <div class="s-brand"><span class="mark" data-o="mark">M</span><span data-o="sName">Ihr {b0.word}</span></div>
@@ -118,14 +126,19 @@ const b0 = aufmass.branchen[0];
             <p>Ihre Auswahl schicke ich mit. Wie erreiche ich Sie am besten?</p>
             <div class="f">
               <label><span>Ihr Name</span><input data-k="lname" type="text" autocomplete="name" /></label>
-              <label><span>Telefon oder E-Mail</span><input data-k="lcontact" type="text" autocomplete="tel" /></label>
+              <label><span>E-Mail</span><input data-k="lcontact" type="email" autocomplete="email" /></label>
+              <label><span>Telefon (optional)</span><input data-k="ltel" type="tel" autocomplete="tel" /></label>
               <label class="full"><span>Noch etwas, das ich wissen sollte? (optional)</span><textarea data-k="lmsg" rows="3" placeholder="z. B. alte Website, Wunschtermin, Ideen"></textarea></label>
             </div>
-            <p class="err" role="alert" hidden>Bitte tragen Sie ein, wie ich Sie erreiche.</p>
+            <p class="err" role="alert" hidden>Bitte tragen Sie eine gültige E-Mail ein.</p>
             <div class="send">
-              <button class="btn btn-sand" data-o="wa" type="button">Per WhatsApp senden</button>
-              <button class="btn ghost" data-o="mail" type="button">Per E-Mail senden</button>
+              <button class="btn btn-sand" data-o="mail" type="button">Aufmaß abschicken</button>
+              <button class="btn ghost" data-o="wa" type="button">Lieber per WhatsApp</button>
             </div>
+          </div>
+          <div class="lead done" data-o="done" hidden>
+            <h3>Danke, ist angekommen.</h3>
+            <p>Sie bekommen innerhalb von zwei Werktagen einen Festpreis von mir.</p>
           </div>
         </div>
   </div>
@@ -174,6 +187,7 @@ const b0 = aufmass.branchen[0];
   .send { display: flex; gap: 10px; flex-wrap: wrap; }
   .ghost { background: transparent; color: var(--paper); border-color: var(--taupe); }
   .ghost:hover { border-color: var(--paper); }
+  .done { margin-top: 14px; }
   .err { color: #f0b3a3; margin: -6px 0 14px; font-size: .95rem; }
 
   /* Zeichenbrett */
@@ -233,6 +247,8 @@ const b0 = aufmass.branchen[0];
   @keyframes hl { 0% { outline-color: var(--pen); background-color: rgb(43 76 155 / .14); } 70% { outline-color: var(--pen); } 100% { outline-color: transparent; background-color: transparent; } }
   .care-tag { display: none; margin-left: 8px; font-size: 10px; color: #fff; background: #5f8a4a; padding: 2px 6px; border-radius: 2px; white-space: nowrap; }
   .care-tag.on { display: inline-block; }
+  .admin-tag { background: var(--pen); }
+  .editable [data-o="sHead"], .editable [data-o="hoursT"] { box-shadow: inset 0 -2px 0 rgb(43 76 155 / .45); }
   .s-nav .lang.on { display: inline; color: var(--ink); font-weight: 600; }
   .mini-card { position: absolute; right: 10px; top: 38px; width: 104px; height: 66px; background: var(--ink); color: var(--paper); font-family: var(--serif); font-size: 10px; padding: 9px 10px; transform: rotate(6deg); box-shadow: 0 10px 18px -8px rgb(0 0 0 / .45); display: none; z-index: 3; }
   .mini-card.on { display: block; animation: pop .35s ease; }
@@ -268,6 +284,7 @@ const b0 = aufmass.branchen[0];
 </style>
 
 <script>
+  import { sendMail } from '../lib/send';
   type Branche = { id: string; word: string; head: string; text: string; cta: string; hours: string };
   const fmt = (n: number) => n.toLocaleString('de-DE') + ' €';
   const slug = (s: string) => s.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
@@ -294,7 +311,7 @@ const b0 = aufmass.branchen[0];
       const base = root.querySelector<HTMLInputElement>('input[name="am-base"]:checked')!;
       let total = Number(base.dataset.price), monthly = 0;
       const extras: string[] = [];
-      root.querySelectorAll<HTMLInputElement>('.rows input[type=checkbox]').forEach((c) => {
+      root.querySelectorAll<HTMLInputElement>('.rows input[type=checkbox], input[name="am-after"]:checked').forEach((c) => {
         if (!c.checked) return;
         total += Number(c.dataset.price ?? 0);
         monthly += Number(c.dataset.monthly ?? 0);
@@ -304,6 +321,8 @@ const b0 = aufmass.branchen[0];
       root.querySelectorAll<HTMLElement>('.s-nav .multi').forEach((e) => (e.style.display = base.value === 'multi' ? 'inline' : 'none'));
       root.querySelector<HTMLElement>('.s-nav .lang')!.classList.toggle('on', on('lang'));
       o('careTag').classList.toggle('on', on('care'));
+      o('adminTag').classList.toggle('on', on('admin'));
+      root.querySelector('.site')!.classList.toggle('editable', on('admin'));
       o('card').classList.toggle('on', on('print'));
       o('cardName').textContent = name || `Ihr ${h.word}`;
       o('pages').classList.toggle('on', base.value === 'multi');
@@ -315,7 +334,7 @@ const b0 = aufmass.branchen[0];
       o('realtext').style.display = on('texte') ? 'block' : 'none';
       o('ph').classList.toggle('photo', on('fotos'));
       o('dimH').textContent = base.value === 'multi' ? '6 Seiten' : base.value === 'app' ? 'mit Login' : '1 Seite';
-      o('note2').textContent = on('care') ? 'ich halte das aktuell' : '';
+      o('note2').textContent = on('care') ? 'ich halte das aktuell' : on('admin') ? 'das ändern Sie selbst' : '';
       o('note1').textContent = on('termin') ? 'Termine rund um die Uhr' : 'kommt aufs Handy!';
       o('sum').textContent = `ab ${fmt(total)}`;
       o('sum2').textContent = `ab ${fmt(total)}`;
@@ -338,6 +357,8 @@ const b0 = aufmass.branchen[0];
       lang: () => [root.querySelector<HTMLElement>('.s-nav .lang')!],
       print: () => [o('card')],
       care: () => [o('careTag')],
+      admin: () => [o('adminTag'), o('sHead')],
+      none: () => [o('url')],
     };
     function flash(els: HTMLElement[]) {
       els.forEach((el) => { el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl'); });
@@ -369,17 +390,44 @@ const b0 = aufmass.branchen[0];
         `Dazu: ${c.extras.join(', ') || 'nichts'}`,
         `Richtwert: ab ${fmt(c.total)}${c.monthly ? ` + ${c.monthly} € / Monat` : ''}`, '',
         ...(msg ? [msg, ''] : []),
-        `Erreichbar unter: ${k('lcontact').value.trim()}`,
+        `E-Mail: ${k('lcontact').value.trim()}`,
+        ...(k('ltel').value.trim() ? [`Telefon: ${k('ltel').value.trim()}`] : []),
         k('lname').value.trim(),
       ].join('\n');
     }
     function ready() {
-      const ok = !!k('lcontact').value.trim();
-      o('lead').querySelector<HTMLElement>('.err')!.hidden = ok;
+      const ok = /^\S+@\S+\.\S+$/.test(k('lcontact').value.trim());
+      const e = o('lead').querySelector<HTMLElement>('.err')!;
+      e.textContent = 'Bitte tragen Sie eine gültige E-Mail ein.';
+      e.hidden = ok;
       if (!ok) k('lcontact').focus();
       return ok;
     }
     o('wa').addEventListener('click', () => { if (ready()) window.open(`https://wa.me/${root.dataset.wa}?text=${encodeURIComponent(message())}`, '_blank', 'noopener'); });
-    o('mail').addEventListener('click', () => { if (ready()) location.href = `mailto:${root.dataset.mail}?subject=${encodeURIComponent('Anfrage über das Aufmaß')}&body=${encodeURIComponent(message())}`; });
+    const mailBtn = o('mail') as HTMLButtonElement;
+    mailBtn.addEventListener('click', async () => {
+      if (!ready()) return;
+      const err = o('lead').querySelector<HTMLElement>('.err')!;
+      const c = update();
+      mailBtn.disabled = true; mailBtn.textContent = 'Wird gesendet …';
+      try {
+        await sendMail(root.dataset.to ?? '', `Aufmaß: ${c.name || c.branche}, ab ${fmt(c.total)}`, {
+          Name: k('lname').value.trim(),
+          email: k('lcontact').value.trim(),
+          Telefon: k('ltel').value.trim(),
+          Betrieb: `${c.name || '–'} (${c.branche})`,
+          Umfang: c.base,
+          Extras: c.extras.join(', ') || 'nichts',
+          Richtwert: `ab ${fmt(c.total)}${c.monthly ? ` + ${c.monthly} € / Monat` : ''}`,
+          Nachricht: k<HTMLTextAreaElement>('lmsg').value.trim(),
+        });
+        o('lead').hidden = true; o('open').style.display = 'none';
+        o('done').hidden = false;
+      } catch {
+        err.textContent = `Das hat leider nicht geklappt. Schicken Sie es bitte per WhatsApp oder schreiben Sie an ${root.dataset.mail}.`;
+        err.hidden = false;
+        mailBtn.disabled = false; mailBtn.textContent = 'Aufmaß abschicken';
+      }
+    });
   });
 </script>

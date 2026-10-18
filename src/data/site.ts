@@ -10,10 +10,14 @@ export const site = {
   description:
     'Webdesign aus Stuttgart: individuelle Websites und Web-Apps für Selbstständige, Vereine und kleine Unternehmen. Ruhiges Design, schnelle Technik, persönliche Betreuung.',
   url: 'https://sporer-webdesign.de', // [SWAP] Domain
-  email: 'hallo@sporer-webdesign.de', // [SWAP]
+  email: 'info@sporer-webdesign.de',
   phone: '+49 170 000 00 00', // [SWAP]
   phoneHref: '+491700000000', // [SWAP] gleiche Nummer ohne Leerzeichen
   whatsapp: '491700000000', // [SWAP] Nummer für wa.me (ohne +)
+  // [SWAP] Empfänger der Kontaktformulare (Versand über formsubmit.co, die Seite hat keinen eigenen Server).
+  // Erst die eigene Adresse eintragen, einmal absenden, Bestätigungsmail anklicken, dann hier den
+  // Zufallscode aus der FormSubmit-Mail eintragen, damit die Adresse nicht öffentlich im Code steht.
+  formTo: 'info@sporer-webdesign.de',
   street: 'Musterstraße 1', // [SWAP]
   zip: '70000', // [SWAP]
   city: 'Stuttgart', // [SWAP]

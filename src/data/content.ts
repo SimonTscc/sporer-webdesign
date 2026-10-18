@@ -27,7 +27,7 @@ export const services = [
     slug: 'betreuung',
     title: 'Betreuung',
     for: 'Alle, die sich nicht selbst um die Technik kümmern wollen',
-    includes: ['Domain und E-Mail-Postfach einrichten', 'Hosting mit SSL-Zertifikat', 'Kleine Änderungen an Texten, Preisen und Bildern', 'Sicherheits-Updates', 'Erreichbar per Telefon, Mail und WhatsApp'],
+    includes: ['Domain und E-Mail-Postfach einrichten', 'Hosting mit SSL-Zertifikat', 'Kleine Änderungen an Texten, Preisen und Bildern', 'Sicherheits-Updates', 'Erreichbar per Telefon, Mail und WhatsApp', 'Alternativ: eigener Admin-Bereich, in dem Sie Inhalte selbst ändern'],
     text: 'Domain, E-Mail-Adresse, Hosting und die kleinen Änderungen zwischendurch. Sie schreiben mir, was anders sein soll, und ich kümmere mich darum.',
   },
 ];
@@ -45,6 +45,7 @@ export const prices = [
   { item: 'Web-App', note: 'je nach Umfang', price: 'ab 1.190 €' },
   { item: 'Visitenkarten, Flyer, Briefpapier', note: 'druckfertige PDF', price: 'ab 69 €' },
   { item: 'Hosting und Betreuung', note: 'monatlich kündbar', price: '15 € / Monat' },
+  { item: 'Oder: eigener Admin-Bereich', note: 'Inhalte selbst pflegen, einmalig statt monatlich', price: 'ab 490 €' },
 ];
 
 export const faq = [
@@ -54,7 +55,7 @@ export const faq = [
   },
   {
     q: 'Kann ich später selbst etwas ändern?',
-    a: 'Kleine Änderungen erledige ich in der Regel am selben oder nächsten Tag. Wenn Sie Preise oder Termine regelmäßig selbst pflegen wollen, richte ich das so ein, dass es ohne Programmierkenntnisse geht.',
+    a: 'Kleine Änderungen erledige ich in der Regel am selben oder nächsten Tag. Wenn Sie Preise oder Termine regelmäßig selbst pflegen wollen, bekommen Sie einen eigenen Admin-Bereich. Dort ändern Sie Texte, Preise und Bilder ohne Programmierkenntnisse, und es fällt kein Monatsbeitrag bei mir an.',
   },
   {
     q: 'Was ist mit Texten und Fotos?',
@@ -82,7 +83,12 @@ export const aufmass = {
     { id: 'lang', title: 'Zweite Sprache', note: 'z. B. Englisch für internationale Kunden', price: 150 }, // [SWAP]
     { id: 'print', title: 'Visitenkarten und Flyer', note: 'Druckfertige PDF passend zur Website', price: 69 },
   ],
-  care: { id: 'care', title: 'Ich kümmere mich danach', note: 'Hosting, Domain, E-Mail, kleine Änderungen', monthly: 15, checked: true },
+  // Nach dem Start: eins von dreien
+  after: [
+    { id: 'care', title: 'Ich kümmere mich danach', note: 'Hosting, Domain, E-Mail, und kleine Änderungen mache ich für Sie', monthly: 15, checked: true },
+    { id: 'admin', title: 'Eigener Admin-Bereich', note: 'Sie ändern Texte, Preise und Bilder selbst und sind unabhängig von mir', price: 490 }, // [SWAP]
+    { id: 'none', title: 'Ich kümmere mich selbst', note: 'Sie bekommen alle Dateien und hosten selbst' },
+  ],
   branchen: [
     { id: 'handwerk', label: 'Handwerk', word: 'Malerbetrieb', head: 'Ihr Handwerksbetrieb in Stuttgart', text: 'Wir streichen, tapezieren und spachteln in Stuttgart und Umgebung. Rufen Sie an, wir kommen zum Aufmaß vorbei.', cta: 'Angebot anfragen', hours: 'Arbeitszeiten' },
     { id: 'praxis', label: 'Praxis oder Therapie', word: 'Praxis', head: 'Ihre Praxis in Stuttgart', text: 'Termine nach Vereinbarung. Neue Patientinnen und Patienten nehmen wir gern auf.', cta: 'Termin vereinbaren', hours: 'Sprechzeiten' },

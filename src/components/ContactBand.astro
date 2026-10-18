@@ -1,29 +1,36 @@
 ---
-// Abschluss jeder Seite: Rückruf anfordern. Baut eine WhatsApp-Nachricht, speichert nichts.
+// Abschluss jeder Seite: kurzes Kontaktformular, das direkt per Mail bei mir ankommt (über formsubmit.co).
 import { site } from '../data/site';
+import { href } from '../lib/url';
 interface Props { title?: string; text?: string }
 const {
-  title = 'Ich rufe Sie zurück.',
+  title = 'Schreiben Sie mir.',
   text = 'Sie müssen noch nicht wissen, was Sie genau brauchen. Erzählen Sie mir, was Sie machen und was Sie stört. Ich sage Ihnen, was ich tun würde und was es ungefähr kostet. Das erste Gespräch ist kostenlos.',
 } = Astro.props;
 ---
-<section class="wrap band" id="rueckruf">
+<section class="wrap band" id="kontakt-kurz">
   <div class="txt">
     <h2>{title}</h2>
     <p>{text}</p>
     <p class="direct">Oder direkt: <a href={`tel:${site.phoneHref}`}>{site.phone}</a></p>
   </div>
-  <form class="cb" data-callback data-wa={site.whatsapp} novalidate>
-    <h3>Rückruf anfordern</h3>
-    <p class="note">Ich melde mich innerhalb von einem Werktag.</p>
+  <form class="cb" data-mailform data-to={site.formTo} data-subject="Neue Anfrage über die Website" novalidate>
+    <h3>Nachricht an Simon</h3>
+    <p class="note">Kommt direkt bei mir an. Ich antworte innerhalb von einem Werktag.</p>
     <div class="f">
-      <label><span>Name</span><input name="name" autocomplete="name" required /></label>
-      <label><span>Telefonnummer</span><input name="tel" type="tel" autocomplete="tel" required /></label>
-      <label><span>Am besten</span><select name="wann"><option>vormittags</option><option>mittags</option><option selected>nachmittags</option><option>abends</option></select></label>
-      <label><span>Worum geht es?</span><select name="was"><option>Neue Website</option><option>Alte Website erneuern</option><option>Web-App</option><option>Visitenkarten oder Flyer</option><option>Weiß ich noch nicht</option></select></label>
+      <label><span>Name</span><input name="Name" autocomplete="name" required /></label>
+      <label><span>E-Mail</span><input name="email" type="email" autocomplete="email" required /></label>
+      <label class="full"><span>Telefon (optional)</span><input name="Telefon" type="tel" autocomplete="tel" /></label>
+      <label class="full"><span>Worum geht es?</span><textarea name="Nachricht" rows="4" required placeholder="z. B. Wir sind ein Malerbetrieb und haben noch keine Website …"></textarea></label>
+      <input class="hp" type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
     </div>
-    <p class="err" role="alert" hidden>Bitte Name und Telefonnummer eintragen.</p>
-    <button class="btn btn-sand" type="submit">Rückruf per WhatsApp anfordern</button>
+    <p class="err" role="alert" hidden></p>
+    <button class="btn btn-sand" type="submit">Nachricht senden</button>
+    <p class="small">Mit dem Absenden werden Ihre Angaben per Mail an mich geschickt. Mehr dazu in der <a href={href('/datenschutz')}>Datenschutzerklärung</a>.</p>
+    <div class="ok" role="status" hidden>
+      <h3>Danke, ist angekommen.</h3>
+      <p>Ich melde mich innerhalb von einem Werktag bei Ihnen.</p>
+    </div>
   </form>
 </section>
 
@@ -38,26 +45,46 @@ const {
   .cb h3 { font-size: 1.7rem; font-weight: 300; }
   .note { color: var(--beige); font-size: .95rem; }
   .f { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 22px 0; }
+  .f .full { grid-column: 1 / -1; }
   @media (max-width: 520px) { .f { grid-template-columns: 1fr; } }
   label span { display: block; font-size: .82rem; color: var(--beige); }
-  input, select { width: 100%; background: transparent; color: var(--paper); border: 0; border-bottom: 1.5px solid var(--beige); padding: 7px 2px; outline: none; border-radius: 0; }
-  input:focus, select:focus { border-color: var(--paper); }
-  select option { color: var(--ink); }
+  input, textarea { width: 100%; background: transparent; color: var(--paper); border: 0; border-bottom: 1.5px solid var(--beige); padding: 7px 2px; outline: none; border-radius: 0; resize: vertical; }
+  input:focus, textarea:focus { border-color: var(--paper); }
+  textarea::placeholder { color: #8d8174; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; }
   .err { color: #f0b3a3; margin: -8px 0 14px; font-size: .95rem; }
+  .small { margin-top: 14px; font-size: .82rem; color: var(--taupe); }
+  .small a { color: var(--beige); }
+  .ok h3 { margin-bottom: 8px; }
+  .ok p { color: var(--beige); }
 </style>
 
 <script>
-  document.querySelectorAll<HTMLFormElement>('[data-callback]').forEach((form) => {
-    form.addEventListener('submit', (e) => {
+  import { sendMail } from '../lib/send';
+  import { site } from '../data/site';
+
+  document.querySelectorAll<HTMLFormElement>('[data-mailform]').forEach((form) => {
+    const err = form.querySelector<HTMLElement>('.err')!;
+    const btn = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
+    const fail = (msg: string) => { err.textContent = msg; err.hidden = false; };
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      err.hidden = true;
       const fd = new FormData(form);
-      const name = String(fd.get('name') ?? '').trim();
-      const tel = String(fd.get('tel') ?? '').trim();
-      const err = form.querySelector<HTMLElement>('.err')!;
-      err.hidden = !!(name && tel);
-      if (!name || !tel) return;
-      const t = `Hallo Simon, bitte ruf mich zurück.\n\nName: ${name}\nTelefon: ${tel}\nAm besten: ${fd.get('wann')}\nThema: ${fd.get('was')}`;
-      window.open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(t)}`, '_blank', 'noopener');
+      if (String(fd.get('_honey') ?? '')) return;
+      const name = String(fd.get('Name') ?? '').trim();
+      const mail = String(fd.get('email') ?? '').trim();
+      const msg = String(fd.get('Nachricht') ?? '').trim();
+      if (!name || !msg || !/^\S+@\S+\.\S+$/.test(mail)) return fail('Bitte Name, eine gültige E-Mail und eine kurze Nachricht eintragen.');
+      btn.disabled = true; btn.textContent = 'Wird gesendet …';
+      try {
+        await sendMail(form.dataset.to ?? '', form.dataset.subject ?? 'Anfrage', { Name: name, email: mail, Telefon: String(fd.get('Telefon') ?? ''), Nachricht: msg });
+        form.querySelectorAll<HTMLElement>(':scope > :not(.ok)').forEach((el) => (el.style.display = 'none'));
+        form.querySelector<HTMLElement>('.ok')!.hidden = false;
+      } catch {
+        fail(`Das hat leider nicht geklappt. Schreiben Sie mir bitte direkt an ${site.email} oder rufen Sie an.`);
+        btn.disabled = false; btn.textContent = 'Nachricht senden';
+      }
     });
   });
 </script>
