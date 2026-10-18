@@ -1,0 +1,21 @@
+---
+import { href } from '../lib/url';
+import Base from '../layouts/Base.astro';
+---
+<Base title="Seite nicht gefunden">
+  <section class="wrap nf">
+    <p class="hand scribble">hm, hier liegt nichts.</p>
+    <h1>Diese Seite gibt es nicht.</h1>
+    <p class="intro-text">Vielleicht ist der Link alt oder hat einen Tippfehler. Auf der Startseite liegt meine Karte, da steht alles drauf.</p>
+    <div class="actions">
+      <a class="btn btn-ink" href={href('/')}>Zur Startseite</a>
+      <a class="btn btn-line" href={href('/kontakt')}>Kontakt</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf { min-height: 64vh; display: grid; align-content: center; gap: 20px; padding-block: 60px; }
+  .scribble { font-size: 2.6rem; transform: rotate(-3deg); transform-origin: left; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; }
+</style>

@@ -1,0 +1,385 @@
+---
+// „Das Aufmaß“: Besucher stellen ihre Website selbst zusammen. Rechts zeichnet sich eine Skizze mit ihrem
+// Firmennamen mit, der Richtpreis steht darunter, und die Auswahl geht als WhatsApp oder Mail an mich.
+// Speichert nichts.
+import { aufmass } from '../data/content';
+import { site } from '../data/site';
+interface Props { title?: string; intro?: string }
+const {
+  title = 'Stellen Sie sich Ihre Website zusammen.',
+  intro = 'Wählen Sie aus, was Sie brauchen. Daneben zeichne ich mit, wie das aussehen könnte, und der Preis steht gleich darunter. Danach reden wir, ganz ohne Verpflichtung.',
+} = Astro.props;
+const eur = (n: number) => n.toLocaleString('de-DE') + ' €';
+const b0 = aufmass.branchen[0];
+---
+<section class="am" id="aufmass" data-aufmass data-wa={site.whatsapp} data-mail={site.email} data-branchen={JSON.stringify(aufmass.branchen)}>
+  <div class="wrap">
+    <div class="head">
+      <h2>{title}</h2>
+      <p>{intro}</p>
+    </div>
+
+    <div class="shop">
+      <div class="form-col">
+        <label class="q">
+          <span class="ql">Wie heißt Ihr Betrieb?</span>
+          <input class="ln" data-k="name" type="text" placeholder="z. B. Malerbetrieb Weber" autocomplete="organization" />
+        </label>
+        <label class="q">
+          <span class="ql">Was machen Sie?</span>
+          <select class="ln" data-k="branche">{aufmass.branchen.map((b) => <option value={b.id}>{b.label}</option>)}</select>
+        </label>
+
+        <fieldset class="q">
+          <legend class="ql">Wie groß soll es werden?</legend>
+          <div class="rows">
+            {aufmass.base.map((b, i) => (
+              <label class="row radio">
+                <input type="radio" name="am-base" value={b.id} data-price={b.price} checked={i === 0} />
+                <span class="box" aria-hidden="true"></span>
+                <span class="t">{b.title}<span class="n">{b.note}</span></span>
+                <span class="p">ab {eur(b.price)}</span>
+              </label>
+            ))}
+          </div>
+        </fieldset>
+
+        <fieldset class="q">
+          <legend class="ql">Was soll dazu?</legend>
+          <div class="rows">
+            {aufmass.extras.map((x) => (
+              <label class="row">
+                <input type="checkbox" value={x.id} data-price={x.price} checked={x.checked} />
+                <span class="box" aria-hidden="true"></span>
+                <span class="t">{x.title}<span class="n">{x.note}</span></span>
+                <span class="p">{x.price ? `+ ${eur(x.price)}` : 'inklusive'}</span>
+              </label>
+            ))}
+            <label class="row">
+              <input type="checkbox" value={aufmass.care.id} data-monthly={aufmass.care.monthly} checked={aufmass.care.checked} />
+              <span class="box" aria-hidden="true"></span>
+              <span class="t">{aufmass.care.title}<span class="n">{aufmass.care.note}</span></span>
+              <span class="p">{aufmass.care.monthly} € / Monat</span>
+            </label>
+          </div>
+          <div class="sum" aria-live="polite">
+            <span class="label">Ungefähr</span>
+            <span><span class="val" data-o="sum">ab {eur(aufmass.base[0].price)}</span><small data-o="monthly">dazu {aufmass.care.monthly} € im Monat, monatlich kündbar</small></span>
+          </div>
+        </fieldset>
+
+      </div>
+
+      <div class="board-col" aria-hidden="true">
+        <div class="board">
+          <div class="clip"></div>
+          <div class="dim top"><span>für Handy und Rechner</span></div>
+          <div class="dim left"><span data-o="dimH">1 Seite</span></div>
+          <div class="sheet">
+            <div class="bar"><i></i><i></i><i></i><span class="url" data-o="url">www.ihr-betrieb.de</span><span class="care-tag" data-o="careTag">betreut</span></div>
+            <div class="site">
+              <div class="s-head">
+                <div class="s-brand"><span class="mark" data-o="mark">M</span><span data-o="sName">Ihr {b0.word}</span></div>
+                <div class="s-nav"><span class="multi">Leistungen</span><span class="multi">Über uns</span><span class="multi">Preise</span><span>Kontakt</span><span class="lang">DE | EN</span></div>
+              </div>
+              <div class="s-hero">
+                <div>
+                  <p class="s-h" data-o="sHead">{b0.head}</p>
+                  <div class="lines" data-o="lines"><i></i><i></i><i></i></div>
+                  <p class="realtext" data-o="realtext">{b0.text}</p>
+                  <span class="s-cta" data-o="sCta">{b0.cta}</span>
+                </div>
+                <div class="ph" data-o="ph"></div>
+              </div>
+              <div class="s-blocks">
+                <div class="blk on"><b>Leistungen</b><div class="lines"><i></i><i></i><i></i></div></div>
+                <div class="blk on"><b>Kontakt und Anfahrt</b><div class="lines"><i></i><i></i></div></div>
+                <div class="blk" data-o="bTermin"><b>Termin wählen</b><div class="cal">{Array.from({ length: 14 }, (_, i) => <span class={[1, 2, 5, 7, 9, 10, 13].includes(i) ? 'f' : i === 4 ? 'x' : ''}></span>)}</div></div>
+                <div class="blk on" data-o="bHours"><b data-o="hoursT">{b0.hours}</b><div class="lines"><i></i><i></i></div></div>
+              </div>
+              <div class="s-pages" data-o="pages"><em>Leistungen</em><em>Über uns</em><em>Preise</em><em>Referenzen</em><em>Kontakt</em></div>
+              <div class="app" data-o="app"><div><span>Name</span><span>Ringe</span><span>Platz</span></div><div><span>Mitglied A</span><span>382</span><span>1</span></div><div><span>Mitglied B</span><span>376</span><span>2</span></div></div>
+              <div class="wa on" data-o="waBtn">✆</div>
+            </div>
+          </div>
+          <div class="mini-card" data-o="card"><span data-o="cardName">Ihr Malerbetrieb</span><i></i></div>
+          <span class="note n1" data-o="note1">kommt aufs Handy!</span>
+          <span class="note n2" data-o="note2">ich halte das aktuell</span>
+        </div>
+        <p class="live"><span>Ungefähr</span><b data-o="sum2">ab 490 €</b></p>
+      </div>
+    </div>
+
+    <div class="send-area">
+          <button class="btn btn-ink" data-o="open" type="button">Dieses Aufmaß an Simon schicken</button>
+          <p class="hint">Sie bekommen innerhalb von zwei Werktagen einen Festpreis. Die Zahlen hier sind Richtwerte.</p>
+          <div class="lead" data-o="lead" hidden>
+            <h3>Fast fertig.</h3>
+            <p>Ihre Auswahl schicke ich mit. Wie erreiche ich Sie am besten?</p>
+            <div class="f">
+              <label><span>Ihr Name</span><input data-k="lname" type="text" autocomplete="name" /></label>
+              <label><span>Telefon oder E-Mail</span><input data-k="lcontact" type="text" autocomplete="tel" /></label>
+              <label class="full"><span>Noch etwas, das ich wissen sollte? (optional)</span><textarea data-k="lmsg" rows="3" placeholder="z. B. alte Website, Wunschtermin, Ideen"></textarea></label>
+            </div>
+            <p class="err" role="alert" hidden>Bitte tragen Sie ein, wie ich Sie erreiche.</p>
+            <div class="send">
+              <button class="btn btn-sand" data-o="wa" type="button">Per WhatsApp senden</button>
+              <button class="btn ghost" data-o="mail" type="button">Per E-Mail senden</button>
+            </div>
+          </div>
+        </div>
+  </div>
+</section>
+
+<style>
+  .am { padding-block: clamp(72px, 9vw, 120px); }
+  .head { display: grid; gap: 18px 64px; margin-bottom: 40px; align-items: end; }
+  @media (min-width: 900px) { .head { grid-template-columns: 1fr 1fr; } }
+  .head p { color: var(--ink-2); max-width: 34em; }
+  .shop { display: grid; gap: 48px; align-items: start; }
+  @media (min-width: 961px) { .shop { grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr); } }
+  .form-col { display: flex; flex-direction: column; gap: 34px; }
+  fieldset { border: 0; padding: 0; min-width: 0; }
+  .q { display: block; }
+  .ql { display: block; font-family: var(--serif); font-size: 1.3rem; margin-bottom: 12px; padding: 0; }
+  .ln, .lead input, .lead textarea { width: 100%; background: transparent; border: 0; border-bottom: 1.5px solid var(--ink); padding: 8px 2px; outline: none; border-radius: 0; }
+  .ln:focus { border-color: var(--taupe); }
+  .rows { border-top: 1px solid var(--line); }
+  .row { position: relative; display: grid; grid-template-columns: 26px 1fr auto; gap: 14px; align-items: center; padding: 14px 4px; border-bottom: 1px solid var(--line); cursor: pointer; }
+  .row:hover { background: rgb(214 195 165 / .18); }
+  .row input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .box { width: 20px; height: 20px; border: 1.5px solid var(--ink); display: grid; place-items: center; transition: background .15s; }
+  .radio .box { border-radius: 50%; }
+  .row input:checked + .box { background: var(--ink); }
+  .row input:checked + .box::after { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--paper); }
+  .row input:focus-visible + .box { outline: 2px solid var(--pen); outline-offset: 3px; }
+  .t { font-weight: 500; }
+  .n { display: block; color: var(--ink-2); font-size: .9rem; font-weight: 400; }
+  .p { font-variant-numeric: tabular-nums; color: var(--ink-2); white-space: nowrap; }
+  .row input:checked ~ .p { color: var(--ink); font-weight: 500; }
+  .sum { display: flex; justify-content: space-between; align-items: baseline; padding: 18px 4px 0; font-variant-numeric: tabular-nums; }
+  .sum .label { color: var(--ink-2); }
+  .val { font-family: var(--serif); font-size: 1.9rem; }
+  .sum small { display: block; color: var(--ink-2); font-size: .88rem; text-align: right; }
+  .send-area { margin-top: 40px; max-width: 620px; }
+  .hint { font-size: .9rem; color: var(--ink-2); margin-top: 10px; }
+
+  .lead { margin-top: 14px; padding: 26px; background: var(--ink); color: var(--paper); border-radius: var(--r-box); }
+  .lead h3 { font-size: 1.6rem; font-weight: 300; }
+  .lead > p { color: var(--beige); font-size: .95rem; margin-bottom: 18px; }
+  .f { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+  .f .full { grid-column: 1 / -1; }
+  .f span { display: block; font-size: .82rem; color: var(--beige); }
+  .lead input, .lead textarea { color: var(--paper); border-color: var(--beige); resize: vertical; }
+  .send { display: flex; gap: 10px; flex-wrap: wrap; }
+  .ghost { background: transparent; color: var(--paper); border-color: var(--taupe); }
+  .ghost:hover { border-color: var(--paper); }
+  .err { color: #f0b3a3; margin: -6px 0 14px; font-size: .95rem; }
+
+  /* Zeichenbrett */
+  .board-col { position: sticky; top: 20px; }
+  .board { position: relative; background: var(--sand); padding: 52px 46px 58px 58px; border-radius: var(--r-paper);
+    background-image: radial-gradient(circle, rgb(168 146 122 / .45) 1px, transparent 1.3px); background-size: 22px 22px; }
+  .clip { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); width: 120px; height: 26px; background: #c9b597; border-radius: 3px; }
+  .sheet { background: #fffdf9; border: 1.5px solid var(--ink); box-shadow: var(--shadow-paper); position: relative; }
+  .bar { display: flex; gap: 6px; align-items: center; padding: 8px 10px; border-bottom: 1.5px solid var(--ink); }
+  .bar i { width: 8px; height: 8px; border-radius: 50%; border: 1.3px solid var(--ink); }
+  .url { flex: 1; margin-left: 10px; font-size: 12px; color: var(--ink-2); border: 1px solid var(--line); padding: 2px 8px; border-radius: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .site { position: relative; padding: 16px 18px 22px; min-height: 420px; font-size: 12px; }
+  .s-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-bottom: 12px; border-bottom: 1px dashed var(--line); }
+  .s-brand { display: flex; align-items: center; gap: 8px; font-family: var(--serif); font-size: 15px; min-width: 0; }
+  .s-brand span:last-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mark { width: 22px; height: 22px; border-radius: 50%; background: var(--beige); display: none; place-items: center; font-size: 12px; flex: none; }
+  .s-nav { display: flex; gap: 9px; color: var(--ink-2); font-size: 11px; white-space: nowrap; }
+  .s-nav .multi, .s-nav .lang { display: none; }
+  .s-hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 14px; padding: 16px 0; }
+  .s-h { font-family: var(--serif); font-size: 19px; line-height: 1.15; margin-bottom: 8px; }
+  .lines i { display: block; height: 6px; background: #e6dccb; margin: 6px 0; border-radius: 2px; }
+  .lines i:nth-child(2) { width: 88%; } .lines i:nth-child(3) { width: 64%; }
+  .realtext { display: none; color: var(--ink-2); font-size: 11px; line-height: 1.45; }
+  .s-cta { display: inline-block; margin-top: 10px; background: var(--ink); color: #fff; font-size: 10px; padding: 5px 9px; border-radius: 2px; }
+  .ph { background: repeating-linear-gradient(135deg, #ede4d6 0 6px, #f6f0e6 6px 12px); border: 1px solid var(--line); min-height: 96px; position: relative; }
+  .ph::after { content: 'Bild'; position: absolute; right: 6px; bottom: 4px; font-size: 9px; color: var(--ink-2); }
+  .ph.photo { border-color: transparent; background: radial-gradient(ellipse 60% 40% at 70% 85%, rgb(42 38 34 / .35), transparent 70%), radial-gradient(circle at 28% 30%, #f3e3c6 0 14%, transparent 15%), linear-gradient(160deg, #b9926a, #8e6b4c 55%, #5e4635); }
+  .ph.photo::after { content: ''; }
+  .s-blocks { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .blk { border: 1px solid var(--line); padding: 9px 10px; display: none; animation: pop .35s ease; }
+  .blk b { display: block; font-weight: 600; font-size: 11px; margin-bottom: 5px; }
+  .blk.on { display: block; }
+  .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+  .cal span { height: 11px; background: #efe7da; }
+  .cal span.f { background: var(--beige); }
+  .cal span.x { background: var(--ink); }
+  .wa { position: absolute; right: 16px; bottom: 16px; width: 30px; height: 30px; border-radius: 50%; background: #2f8f5b; display: none; place-items: center; color: #fff; font-size: 13px; animation: pop .35s ease; }
+  .wa.on { display: grid; }
+  .s-pages { display: none; margin-top: 12px; gap: 6px; }
+  .s-pages.on { display: flex; }
+  .s-pages em { font-style: normal; flex: 1; border: 1px solid var(--line); font-size: 9.5px; color: var(--ink-2); padding: 14px 4px 4px; text-align: center; background: #fbf8f2; }
+  .app { display: none; margin-top: 12px; border: 1px solid var(--ink); font-size: 10px; }
+  .app.on { display: block; }
+  .app div { display: grid; grid-template-columns: 1fr 50px 40px; padding: 4px 8px; border-bottom: 1px solid var(--line); }
+  .app div:first-child { background: var(--ink); color: #fff; }
+  @keyframes pop { from { transform: scale(.96); opacity: 0; } to { transform: none; opacity: 1; } }
+
+  .dim { position: absolute; color: var(--taupe); font-size: 12px; }
+  .dim.top { left: 58px; right: 46px; top: 20px; height: 14px; border-left: 1px solid; border-right: 1px solid; }
+  .dim.top::before { content: ''; position: absolute; left: 0; right: 0; top: 7px; border-top: 1px solid; }
+  .dim.top span { position: absolute; left: 50%; top: -2px; transform: translateX(-50%); background: var(--sand); padding: 0 8px; white-space: nowrap; }
+  .dim.left { top: 52px; bottom: 58px; left: 22px; width: 14px; border-top: 1px solid; border-bottom: 1px solid; }
+  .dim.left::before { content: ''; position: absolute; top: 0; bottom: 0; left: 7px; border-left: 1px solid; }
+  .dim.left span { position: absolute; top: 50%; left: 7px; transform: translate(-50%, -50%) rotate(-90deg); background: var(--sand); padding: 0 8px; white-space: nowrap; }
+  /* Hervorhebung des zuletzt geänderten Teils */
+  .hl { outline: 2.5px solid var(--pen) !important; outline-offset: 3px; animation: hl 1.8s ease forwards; position: relative; z-index: 2; }
+  @keyframes hl { 0% { outline-color: var(--pen); background-color: rgb(43 76 155 / .14); } 70% { outline-color: var(--pen); } 100% { outline-color: transparent; background-color: transparent; } }
+  .care-tag { display: none; margin-left: 8px; font-size: 10px; color: #fff; background: #5f8a4a; padding: 2px 6px; border-radius: 2px; white-space: nowrap; }
+  .care-tag.on { display: inline-block; }
+  .s-nav .lang.on { display: inline; color: var(--ink); font-weight: 600; }
+  .mini-card { position: absolute; right: 10px; top: 38px; width: 104px; height: 66px; background: var(--ink); color: var(--paper); font-family: var(--serif); font-size: 10px; padding: 9px 10px; transform: rotate(6deg); box-shadow: 0 10px 18px -8px rgb(0 0 0 / .45); display: none; z-index: 3; }
+  .mini-card.on { display: block; animation: pop .35s ease; }
+  .mini-card i { position: absolute; left: 10px; right: 10px; bottom: 12px; height: 1px; background: var(--beige); }
+  .live { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; margin-top: 12px; font-size: .92rem; color: var(--ink-2); min-height: 1.6em; }
+  .live b { font-family: var(--serif); font-weight: 400; font-size: 1.35rem; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .note { position: absolute; font-family: var(--hand); color: var(--pen); font-size: 25px; line-height: 1; pointer-events: none; }
+  .n1 { right: -6px; bottom: 14px; transform: rotate(-4deg); }
+  .n2 { left: 64px; bottom: 20px; transform: rotate(2deg); }
+
+  @media (max-width: 960px) {
+    .board-col { position: sticky; top: 0; order: -1; z-index: 5; background: var(--paper); padding: 8px 0 6px; margin-inline: calc(var(--pad) * -1); padding-inline: var(--pad); box-shadow: 0 14px 18px -16px rgb(42 38 34 / .35); }
+    .note { display: none; }
+  }
+  @media (max-width: 960px) {
+    .board { padding: 12px; background-size: 16px 16px; }
+    .clip, .dim { display: none; }
+    .site { min-height: 0; }
+    .mini-card { top: 26px; width: 74px; height: 47px; font-size: 8px; padding: 6px 7px; }
+    .mini-card i { left: 7px; right: 7px; bottom: 8px; }
+    .live { margin-top: 8px; font-size: .85rem; }
+    .live b { font-size: 1.15rem; }
+  }
+  @media (max-width: 560px) {
+    .sheet { zoom: .5; }
+    .f { grid-template-columns: 1fr; }
+    .row { grid-template-columns: 20px 1fr auto; gap: 10px; padding: 10px 2px; }
+    .n { font-size: .82rem; line-height: 1.35; }
+    .p { font-size: .88rem; }
+    .ql { font-size: 1.15rem; margin-bottom: 8px; }
+    .form-col { gap: 26px; }
+  }
+</style>
+
+<script>
+  type Branche = { id: string; word: string; head: string; text: string; cta: string; hours: string };
+  const fmt = (n: number) => n.toLocaleString('de-DE') + ' €';
+  const slug = (s: string) => s.toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+  document.querySelectorAll<HTMLElement>('[data-aufmass]').forEach((root) => {
+    const branchen: Branche[] = JSON.parse(root.dataset.branchen ?? '[]');
+    const o = (k: string) => root.querySelector<HTMLElement>(`[data-o="${k}"]`)!;
+    const k = <T extends HTMLElement = HTMLInputElement>(n: string) => root.querySelector<T>(`[data-k="${n}"]`)!;
+    const on = (v: string) => !!root.querySelector<HTMLInputElement>(`input[value="${v}"]`)?.checked;
+    const label = (i: HTMLInputElement) => i.closest('.row')!.querySelector('.t')!.firstChild!.textContent!.trim();
+
+    function update() {
+      const name = k('name').value.trim();
+      const brSel = k<HTMLSelectElement>('branche');
+      const h = branchen.find((b) => b.id === brSel.value) ?? branchen[0];
+      o('sName').textContent = name || `Ihr ${h.word}`;
+      o('url').textContent = `www.${slug(name) || 'ihr-betrieb'}.de`;
+      o('mark').textContent = (name || h.word).charAt(0).toUpperCase();
+      o('sHead').textContent = name ? `${name}${h.id === 'coach' ? ', Coaching aus Stuttgart' : ' in Stuttgart'}` : h.head;
+      o('realtext').textContent = h.text;
+      o('sCta').textContent = h.cta;
+      o('hoursT').textContent = h.hours;
+
+      const base = root.querySelector<HTMLInputElement>('input[name="am-base"]:checked')!;
+      let total = Number(base.dataset.price), monthly = 0;
+      const extras: string[] = [];
+      root.querySelectorAll<HTMLInputElement>('.rows input[type=checkbox]').forEach((c) => {
+        if (!c.checked) return;
+        total += Number(c.dataset.price ?? 0);
+        monthly += Number(c.dataset.monthly ?? 0);
+        extras.push(label(c));
+      });
+
+      root.querySelectorAll<HTMLElement>('.s-nav .multi').forEach((e) => (e.style.display = base.value === 'multi' ? 'inline' : 'none'));
+      root.querySelector<HTMLElement>('.s-nav .lang')!.classList.toggle('on', on('lang'));
+      o('careTag').classList.toggle('on', on('care'));
+      o('card').classList.toggle('on', on('print'));
+      o('cardName').textContent = name || `Ihr ${h.word}`;
+      o('pages').classList.toggle('on', base.value === 'multi');
+      o('app').classList.toggle('on', base.value === 'app');
+      o('bTermin').classList.toggle('on', on('termin'));
+      o('bHours').classList.toggle('on', !on('termin'));
+      o('waBtn').classList.toggle('on', on('wa'));
+      o('lines').style.display = on('texte') ? 'none' : 'block';
+      o('realtext').style.display = on('texte') ? 'block' : 'none';
+      o('ph').classList.toggle('photo', on('fotos'));
+      o('dimH').textContent = base.value === 'multi' ? '6 Seiten' : base.value === 'app' ? 'mit Login' : '1 Seite';
+      o('note2').textContent = on('care') ? 'ich halte das aktuell' : '';
+      o('note1').textContent = on('termin') ? 'Termine rund um die Uhr' : 'kommt aufs Handy!';
+      o('sum').textContent = `ab ${fmt(total)}`;
+      o('sum2').textContent = `ab ${fmt(total)}`;
+      o('monthly').textContent = monthly ? `dazu ${monthly} € im Monat, monatlich kündbar` : 'einmalig, keine laufenden Kosten';
+
+      return { name, branche: brSel.selectedOptions[0].text, base: label(base), extras, total, monthly };
+    }
+
+    // Was in der Skizze zu welcher Auswahl gehört
+    const targets: Record<string, () => HTMLElement[]> = {
+      name: () => [o('sName'), o('url')],
+      branche: () => [o('sHead')],
+      one: () => [root.querySelector<HTMLElement>('.s-hero')!],
+      multi: () => [o('pages'), root.querySelector<HTMLElement>('.s-nav')!],
+      app: () => [o('app')],
+      termin: () => [o('bTermin')],
+      wa: () => [o('waBtn')],
+      texte: () => [o('realtext')],
+      fotos: () => [o('ph')],
+      lang: () => [root.querySelector<HTMLElement>('.s-nav .lang')!],
+      print: () => [o('card')],
+      care: () => [o('careTag')],
+    };
+    function flash(els: HTMLElement[]) {
+      els.forEach((el) => { el.classList.remove('hl'); void el.offsetWidth; el.classList.add('hl'); });
+    }
+    let typing = 0;
+    function changed(e: Event) {
+      const t = e.target as HTMLInputElement | HTMLSelectElement;
+      if (!t.closest('.form-col') || t.closest('.lead')) return;
+      update();
+      const key = t.dataset.k ?? t.value;
+      const els = targets[key]?.().filter((el) => el.offsetParent !== null) ?? [];
+      if (key === 'name') { clearTimeout(typing); typing = window.setTimeout(() => flash(els), 250); }
+      else if (!(t instanceof HTMLInputElement && t.type === 'checkbox' && !t.checked)) flash(els);
+    }
+    root.addEventListener('input', changed);
+    root.addEventListener('change', (e) => { if ((e.target as HTMLElement).tagName === 'SELECT') return; update(); });
+    update();
+
+    o('open').addEventListener('click', () => { o('lead').hidden = false; k('lname').focus(); });
+
+    function message() {
+      const c = update();
+      const msg = k<HTMLTextAreaElement>('lmsg').value.trim();
+      return [
+        'Hallo Simon,', '',
+        'ich habe mir auf deiner Seite eine Website zusammengestellt:', '',
+        `Betrieb: ${c.name || '–'} (${c.branche})`,
+        `Umfang: ${c.base}`,
+        `Dazu: ${c.extras.join(', ') || 'nichts'}`,
+        `Richtwert: ab ${fmt(c.total)}${c.monthly ? ` + ${c.monthly} € / Monat` : ''}`, '',
+        ...(msg ? [msg, ''] : []),
+        `Erreichbar unter: ${k('lcontact').value.trim()}`,
+        k('lname').value.trim(),
+      ].join('\n');
+    }
+    function ready() {
+      const ok = !!k('lcontact').value.trim();
+      o('lead').querySelector<HTMLElement>('.err')!.hidden = ok;
+      if (!ok) k('lcontact').focus();
+      return ok;
+    }
+    o('wa').addEventListener('click', () => { if (ready()) window.open(`https://wa.me/${root.dataset.wa}?text=${encodeURIComponent(message())}`, '_blank', 'noopener'); });
+    o('mail').addEventListener('click', () => { if (ready()) location.href = `mailto:${root.dataset.mail}?subject=${encodeURIComponent('Anfrage über das Aufmaß')}&body=${encodeURIComponent(message())}`; });
+  });
+</script>

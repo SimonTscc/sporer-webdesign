@@ -1,0 +1,51 @@
+---
+import { href } from '../lib/url';
+import Base from '../layouts/Base.astro';
+import Karte from '../components/Karte.astro';
+import Aufmass from '../components/Aufmass.astro';
+import ProjectRows from '../components/ProjectRows.astro';
+import Steps from '../components/Steps.astro';
+import ContactBand from '../components/ContactBand.astro';
+---
+<Base home>
+  <Karte />
+
+  <Aufmass />
+
+  <section class="wrap block work">
+    <div class="sec-head">
+      <h2>Was schon fertig ist</h2>
+      <p class="muted">Alle diese Seiten habe ich 2026 gestaltet und programmiert, ohne Baukasten und ohne Vorlage. Die Bilder zeigen jeweils die ganze Seite. Fahren Sie mit der Maus darüber oder scrollen Sie auf dem Handy darin.</p>
+    </div>
+    <ProjectRows />
+    <p class="all"><a href={href('/arbeiten')}>Alle Arbeiten mit Hintergrund</a></p>
+  </section>
+
+  <section class="wrap two">
+    <div>
+      <h2>Wie es weitergeht</h2>
+      <Steps />
+    </div>
+    <div class="me">
+      <h2>Wer das baut</h2>
+      <p>Ich heiße Simon Sporer und mache das allein, ohne Agentur dahinter. Sie reden also immer mit dem, der die Seite auch baut.</p>
+      <p>Ich nutze keine Baukästen und keine gekauften Vorlagen. Jede Seite wird neu gestaltet, lädt schnell und gehört danach Ihnen, mit dem ganzen Code.</p>
+      <p><a href={href('/ueber-mich')}>Mehr über mich</a></p>
+    </div>
+  </section>
+
+  <div class="wrap"><div class="rule"><i></i></div></div>
+  <ContactBand />
+</Base>
+
+<style>
+  .work { padding-top: 0; }
+  .sec-head { display: grid; gap: 14px 64px; margin-bottom: 36px; align-items: end; }
+  @media (min-width: 900px) { .sec-head { grid-template-columns: 1fr 1.3fr; } }
+  .sec-head p { max-width: 36em; }
+  .all { margin-top: 24px; font-weight: 500; }
+  .two { display: grid; gap: 56px 80px; padding-bottom: clamp(72px, 9vw, 120px); }
+  @media (min-width: 900px) { .two { grid-template-columns: 1.1fr 1fr; } }
+  .two h2 { font-size: clamp(1.8rem, 1.4rem + 1.4vw, 2.5rem); margin-bottom: 22px; }
+  .me p { max-width: 34em; }
+</style>

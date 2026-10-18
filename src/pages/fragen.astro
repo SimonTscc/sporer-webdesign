@@ -1,0 +1,35 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHead from '../components/PageHead.astro';
+import ContactBand from '../components/ContactBand.astro';
+import { faq } from '../data/content';
+const ld = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+};
+---
+<Base title="Häufige Fragen" description="Antworten auf häufige Fragen zu Dauer, Kosten, Pflege und Hosting einer Website bei Sporer Webdesign.">
+  <PageHead title="Häufige Fragen" intro="Was Kunden mich vor dem ersten Gespräch am häufigsten fragen. Wenn Ihre Frage nicht dabei ist, rufen Sie einfach an." />
+  <section class="wrap">
+    <dl class="faq">
+      {faq.map((f) => (
+        <div>
+          <dt>{f.q}</dt>
+          <dd>{f.a}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+  <div style="height:clamp(64px,8vw,120px)"></div>
+  <ContactBand title="Noch eine Frage offen?" />
+  <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+</Base>
+
+<style>
+  .faq { border-top: 1.5px solid var(--ink); }
+  .faq > div { display: grid; gap: 10px 64px; padding-block: 30px; border-bottom: 1px solid var(--line); }
+  @media (min-width: 900px) { .faq > div { grid-template-columns: 1fr 2fr; } }
+  dt { font-family: var(--serif); font-size: clamp(1.25rem, 1.1rem + .5vw, 1.55rem); line-height: 1.2; }
+  dd { margin: 0; max-width: 38em; }
+</style>

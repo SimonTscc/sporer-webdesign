@@ -1,0 +1,27 @@
+---
+import Legal from '../components/Legal.astro';
+import { site, isPreview } from '../data/site';
+---
+<Legal title="Impressum">
+  {isPreview && <p class="todo">[SWAP] Vorlage: Anschrift, Telefon und ggf. Steuerangaben vor dem Livegang eintragen und rechtlich prüfen lassen.</p>}
+  <h2>Angaben gemäß § 5 DDG</h2>
+  <p>{site.owner}<br />{site.name}<br />{site.street}<br />{site.zip} {site.city}</p>
+
+  <h2>Kontakt</h2>
+  <p>Telefon: {site.phone}<br />E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a></p>
+
+  <h2>Umsatzsteuer</h2>
+  <p>{site.taxNote}</p>
+
+  <h2>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h2>
+  <p>{site.owner}, Anschrift wie oben</p>
+
+  <h2>Verbraucherstreitbeilegung</h2>
+  <p>Ich bin nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+
+  <h2>Haftung für Inhalte und Links</h2>
+  <p>Die Inhalte dieser Seite wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität kann ich jedoch keine Gewähr übernehmen. Für Inhalte externer Links sind ausschließlich deren Betreiber verantwortlich.</p>
+
+  <h2>Urheberrecht</h2>
+  <p>Texte, Gestaltung und Logo dieser Website unterliegen dem deutschen Urheberrecht. Gezeigte Kundenprojekte erscheinen mit freundlicher Genehmigung der jeweiligen Kunden.</p>
+</Legal>

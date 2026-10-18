@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import PageHead from '../../components/PageHead.astro';
+import ProjectRows from '../../components/ProjectRows.astro';
+import ContactBand from '../../components/ContactBand.astro';
+---
+<Base title="Arbeiten" description="Projekte von Simon Sporer: Websites und Web-Apps für ein Keramik-Studio, einen Felgen-Betrieb, einen Fitness-Coach und einen Schützenverein.">
+  <PageHead title="Arbeiten" intro="Alle Projekte aus diesem Jahr, vom Keramik-Studio bis zur Vereins-App. Zu jedem gibt es eine eigene Seite mit Ausgangslage und dem, was ich gemacht habe." />
+  <section class="wrap" style="padding-bottom:clamp(64px,8vw,120px)"><ProjectRows /></section>
+  <ContactBand />
+</Base>

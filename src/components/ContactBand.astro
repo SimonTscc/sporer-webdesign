@@ -1,0 +1,63 @@
+---
+// Abschluss jeder Seite: Rückruf anfordern. Baut eine WhatsApp-Nachricht, speichert nichts.
+import { site } from '../data/site';
+interface Props { title?: string; text?: string }
+const {
+  title = 'Ich rufe Sie zurück.',
+  text = 'Sie müssen noch nicht wissen, was Sie genau brauchen. Erzählen Sie mir, was Sie machen und was Sie stört. Ich sage Ihnen, was ich tun würde und was es ungefähr kostet. Das erste Gespräch ist kostenlos.',
+} = Astro.props;
+---
+<section class="wrap band" id="rueckruf">
+  <div class="txt">
+    <h2>{title}</h2>
+    <p>{text}</p>
+    <p class="direct">Oder direkt: <a href={`tel:${site.phoneHref}`}>{site.phone}</a></p>
+  </div>
+  <form class="cb" data-callback data-wa={site.whatsapp} novalidate>
+    <h3>Rückruf anfordern</h3>
+    <p class="note">Ich melde mich innerhalb von einem Werktag.</p>
+    <div class="f">
+      <label><span>Name</span><input name="name" autocomplete="name" required /></label>
+      <label><span>Telefonnummer</span><input name="tel" type="tel" autocomplete="tel" required /></label>
+      <label><span>Am besten</span><select name="wann"><option>vormittags</option><option>mittags</option><option selected>nachmittags</option><option>abends</option></select></label>
+      <label><span>Worum geht es?</span><select name="was"><option>Neue Website</option><option>Alte Website erneuern</option><option>Web-App</option><option>Visitenkarten oder Flyer</option><option>Weiß ich noch nicht</option></select></label>
+    </div>
+    <p class="err" role="alert" hidden>Bitte Name und Telefonnummer eintragen.</p>
+    <button class="btn btn-sand" type="submit">Rückruf per WhatsApp anfordern</button>
+  </form>
+</section>
+
+<style>
+  .band { display: grid; gap: 40px 72px; padding-block: clamp(72px, 9vw, 120px); }
+  @media (min-width: 900px) { .band { grid-template-columns: 1fr 1fr; align-items: start; } }
+  .txt h2 { margin-bottom: 18px; }
+  .txt p { max-width: 34em; }
+  .direct { margin-top: 18px; }
+  .direct a { font-family: var(--serif); font-size: 1.35em; text-decoration: none; white-space: nowrap; }
+  .cb { background: var(--ink); color: var(--paper); padding: clamp(24px, 4vw, 36px); border-radius: var(--r-box); }
+  .cb h3 { font-size: 1.7rem; font-weight: 300; }
+  .note { color: var(--beige); font-size: .95rem; }
+  .f { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin: 22px 0; }
+  @media (max-width: 520px) { .f { grid-template-columns: 1fr; } }
+  label span { display: block; font-size: .82rem; color: var(--beige); }
+  input, select { width: 100%; background: transparent; color: var(--paper); border: 0; border-bottom: 1.5px solid var(--beige); padding: 7px 2px; outline: none; border-radius: 0; }
+  input:focus, select:focus { border-color: var(--paper); }
+  select option { color: var(--ink); }
+  .err { color: #f0b3a3; margin: -8px 0 14px; font-size: .95rem; }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLFormElement>('[data-callback]').forEach((form) => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const name = String(fd.get('name') ?? '').trim();
+      const tel = String(fd.get('tel') ?? '').trim();
+      const err = form.querySelector<HTMLElement>('.err')!;
+      err.hidden = !!(name && tel);
+      if (!name || !tel) return;
+      const t = `Hallo Simon, bitte ruf mich zurück.\n\nName: ${name}\nTelefon: ${tel}\nAm besten: ${fd.get('wann')}\nThema: ${fd.get('was')}`;
+      window.open(`https://wa.me/${form.dataset.wa}?text=${encodeURIComponent(t)}`, '_blank', 'noopener');
+    });
+  });
+</script>

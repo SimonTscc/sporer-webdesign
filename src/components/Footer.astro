@@ -1,0 +1,36 @@
+---
+import { href } from '../lib/url';
+import Logo from './Logo.astro';
+import { site, nav } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="ft">
+  <div class="wrap grid">
+    <div class="who">
+      <Logo withCity />
+    </div>
+    <div>
+      <p><a href={`tel:${site.phoneHref}`}>{site.phone}</a><br /><a href={`mailto:${site.email}`}>{site.email}</a><br /><a href={`https://wa.me/${site.whatsapp}`} rel="noopener">WhatsApp</a></p>
+      <p class="muted">{site.owner}<br />{site.street}<br />{site.zip} {site.city}</p>
+    </div>
+    <ul>{nav.map((n) => <li><a href={href(n.href)}>{n.label}</a></li>)}<li><a href={href('/kontakt')}>Kontakt</a></li></ul>
+    <ul><li><a href={href('/impressum')}>Impressum</a></li><li><a href={href('/datenschutz')}>Datenschutz</a></li></ul>
+  </div>
+  <div class="wrap"><div class="rule"><i></i></div></div>
+  <div class="wrap base">
+    <span>© {year} {site.owner}</span>
+    <span>Diese Seite setzt keine Cookies und zählt keine Besucher.</span>
+  </div>
+</footer>
+
+<style>
+  .ft { background: var(--ink); color: var(--paper); padding-top: clamp(56px, 7vw, 88px); font-size: .97rem; --logo-ink: var(--paper); --logo-sub: var(--beige); --logo-accent: var(--taupe); }
+  .grid { display: grid; gap: 36px; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); padding-bottom: 48px; }
+  .who :global(svg) { width: 200px; margin-left: -16px; }
+  .muted { color: var(--beige); margin-top: 14px; }
+  ul { list-style: none; padding: 0; display: grid; gap: 4px; align-content: start; }
+  a { text-decoration: none; }
+  a:hover { text-decoration: underline; text-decoration-color: var(--beige); }
+  .rule { color: #5a5148; }
+  .base { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; padding-block: 22px 30px; font-size: .88rem; color: var(--taupe); }
+</style>

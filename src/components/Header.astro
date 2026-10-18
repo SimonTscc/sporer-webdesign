@@ -1,0 +1,59 @@
+---
+import { href, stripBase } from '../lib/url';
+import Logo from './Logo.astro';
+import { nav, site } from '../data/site';
+interface Props { home?: boolean }
+const { home = false } = Astro.props;
+const path = stripBase(Astro.url.pathname).replace(/\/$/, '') || '/';
+---
+<header class:list={['hd', { home }]}>
+  <div class="wrap bar">
+    <a href={href('/')} class="brand" aria-label="Sporer Webdesign, zur Startseite"><Logo /></a>
+    <nav aria-label="Hauptnavigation" class="nav" id="nav">
+      <ul>
+        {nav.map((n) => <li><a href={href(n.href)} aria-current={path.startsWith(n.href) ? 'page' : undefined}>{n.label}</a></li>)}
+      </ul>
+      <a class="tel" href={`tel:${site.phoneHref}`}>{site.phone}</a>
+      <a href={href('/kontakt')} class="btn btn-ink contact">Kontakt</a>
+    </nav>
+    <button class="menu" type="button" aria-expanded="false" aria-controls="nav">Menü</button>
+  </div>
+</header>
+
+<style>
+  .hd { position: relative; z-index: 20; background: var(--paper); }
+  .hd.home { background: var(--sand); }
+  .bar { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding-block: 16px; }
+  .brand { width: 118px; display: block; }
+  .brand :global(svg) { width: 100%; }
+  .nav { display: flex; align-items: center; gap: 30px; }
+  .nav ul { display: flex; gap: 24px; list-style: none; padding: 0; }
+  .nav ul a { text-decoration: none; color: var(--ink-2); font-size: .97rem; padding: 6px 0; border-bottom: 1.5px solid transparent; }
+  .nav ul a:hover { color: var(--ink); }
+  .nav ul a[aria-current='page'] { color: var(--ink); border-color: var(--ink); }
+  .tel { text-decoration: none; font-weight: 500; white-space: nowrap; }
+  .contact { min-height: 42px; padding: 0 16px; }
+  .menu { display: none; min-height: 42px; padding: 0 14px; border: 1.5px solid var(--ink); border-radius: var(--r-ui); background: none; font-weight: 500; cursor: pointer; }
+
+  @media (max-width: 1060px) { .tel { display: none; } }
+  @media (max-width: 900px) {
+    .menu { display: block; }
+    .nav { display: none; position: absolute; left: 0; right: 0; top: 100%; flex-direction: column; align-items: stretch; gap: 0; background: var(--paper); border-bottom: 1px solid var(--line); padding: 8px var(--pad) 24px; box-shadow: 0 20px 30px -20px rgb(42 38 34 / .25); }
+    .nav.open { display: flex; }
+    .nav ul { flex-direction: column; gap: 0; }
+    .nav ul a { display: block; padding: 14px 0; border-bottom: 1px solid var(--line); font-family: var(--serif); font-size: 1.5rem; color: var(--ink); }
+    .nav ul a[aria-current='page'] { border-color: var(--line); text-decoration: underline; text-decoration-color: var(--taupe); }
+    .tel { display: block; margin-top: 18px; font-family: var(--serif); font-size: 1.4rem; }
+    .contact { margin-top: 14px; }
+  }
+</style>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('.menu');
+  const nav = document.getElementById('nav');
+  btn?.addEventListener('click', () => {
+    const open = nav!.classList.toggle('open');
+    btn.setAttribute('aria-expanded', String(open));
+    btn.textContent = open ? 'Schließen' : 'Menü';
+  });
+</script>

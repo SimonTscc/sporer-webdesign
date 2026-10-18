@@ -1,0 +1,14 @@
+---
+// Logo als Inline-SVG, Farben folgen dem Theme (hell/dunkel)
+import raw from '../assets/logo.svg?raw';
+import rawOrt from '../assets/logo-ort.svg?raw';
+interface Props { withCity?: boolean; class?: string; label?: string }
+const { withCity = false, class: cls = '', label = 'Sporer Webdesign' } = Astro.props;
+const svg = (withCity ? rawOrt : raw)
+  .replace('<svg ', `<svg role="img" aria-label="${label}" class="logo ${cls}" `)
+  .replace('fill="#2A2622"', 'style="fill:var(--logo-ink, var(--ink))"')
+  .replace('fill="#7D6F60"', 'style="fill:var(--logo-sub, var(--ink-2))"')
+  .replaceAll('stroke="#A8927A"', 'style="stroke:var(--logo-accent, var(--taupe))"')
+  .replace('fill="#A8927A"', 'style="fill:var(--logo-accent, var(--taupe))"');
+---
+<Fragment set:html={svg} />

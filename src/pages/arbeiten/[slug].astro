@@ -1,0 +1,72 @@
+---
+import { href } from '../../lib/url';
+import { Image } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import ContactBand from '../../components/ContactBand.astro';
+import { projects } from '../../data/projects';
+
+export function getStaticPaths() {
+  return projects.map((p, i) => ({ params: { slug: p.slug }, props: { p, next: projects[(i + 1) % projects.length] } }));
+}
+const { p, next } = Astro.props;
+---
+<Base title={p.client} description={p.summary}>
+  <article>
+    <header class="wrap head">
+      <p class="crumb"><a href={href('/arbeiten')}>Arbeiten</a> / {p.client}</p>
+      <h1>{p.client}</h1>
+      <p class="intro-text">{p.summary}</p>
+      <dl class="facts">
+        <div><dt>Projekt</dt><dd>{p.kind}</dd></div>
+        <div><dt>Ort</dt><dd>{p.place}</dd></div>
+        <div><dt>Jahr</dt><dd>{p.year}</dd></div>
+        <div><dt>Gebaut mit</dt><dd>{p.built}</dd></div>
+      </dl>
+    </header>
+
+    <div class="wrap">
+      <div class:list={['desk', { mobile: p.mobile }]}>
+        {p.images.map((img, i) => (
+          <figure class="print-sheet" style={`--r:${i % 2 ? 1.2 : -0.8}deg`}>
+            <Image src={img} alt={`${p.client}: Ansicht ${i + 1}`} widths={p.mobile ? [390, 780] : [800, 1440]} sizes={p.mobile ? '320px' : '(min-width: 1100px) 1000px, 92vw'} />
+          </figure>
+        ))}
+      </div>
+    </div>
+
+    <div class="wrap story">
+      {p.body.map((b) => (
+        <section>
+          <h2>{b.h}</h2>
+          <p>{b.p}</p>
+        </section>
+      ))}
+    </div>
+
+    <nav class="wrap next" aria-label="Weiteres Projekt">
+      <span class="muted">Nächstes Projekt</span>
+      <a href={href(`/arbeiten/${next.slug}`)}>{next.client}</a>
+    </nav>
+  </article>
+  <ContactBand title="Sie hätten gern etwas Ähnliches?" />
+</Base>
+
+<style>
+  .head { padding-top: clamp(32px, 6vw, 80px); display: grid; gap: 20px; }
+  .crumb { font-size: .95rem; color: var(--ink-2); }
+  .head .intro-text { max-width: 36em; }
+  .facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px 32px; margin-top: 18px; padding-top: 18px; border-top: 1.5px solid var(--ink); }
+  dt { font-size: .85rem; color: var(--ink-2); }
+  dd { margin: 0; font-weight: 600; }
+
+  .desk { margin-top: clamp(36px, 5vw, 64px); background: var(--sand); border-radius: var(--r-box); padding: clamp(20px, 5vw, 72px); display: flex; justify-content: center; gap: clamp(20px, 4vw, 56px); }
+  .print-sheet { margin: 0; background: #fdfcf9; padding: 12px; border-radius: var(--r-paper); box-shadow: var(--shadow-paper); transform: rotate(var(--r)); max-width: 1000px; }
+  .desk.mobile .print-sheet { width: min(42%, 320px); padding: 8px; border-radius: 18px; background: #1d1a17; }
+  .desk.mobile .print-sheet :global(img) { border-radius: 12px; }
+
+  .story { display: grid; gap: 40px; padding-block: clamp(56px, 8vw, 110px); max-width: calc(46em + var(--pad) * 2); }
+  .story h2 { font-size: clamp(1.4rem, 1.2rem + .8vw, 1.9rem); margin-bottom: 10px; }
+
+  .next { display: grid; gap: 6px; padding-bottom: clamp(56px, 8vw, 96px); }
+  .next a { font-family: var(--serif); font-size: clamp(2rem, 1.4rem + 2.6vw, 3.6rem); line-height: 1.05; text-decoration-thickness: 2px; }
+</style>

@@ -1,0 +1,88 @@
+/* Sporer Webdesign – v4 „Die Karte“
+   Die Website ist die Visitenkarte: gleiche Farben, Linie · Punkt · Linie, Papier statt Bildschirm.
+   Schriften: Spectral (Überschriften, leicht), Golos Text (Text), Nanum Pen Script (nur Notizen in der Aufmaß-Skizze).
+   Kuli-Blau nur für handschriftliche Notizen. */
+
+:root {
+  --paper: #f7f3ec;
+  --sand: #e9dfcf;
+  --sand-2: #f1e9dc;
+  --beige: #d6c3a5;
+  --taupe: #a8927a;
+  --ink: #2a2622;
+  --ink-2: #7d6f60;
+  --line: #d8cab4;
+  --pen: #2b4c9b;
+
+  --serif: 'Spectral', Georgia, serif;
+  --sans: 'Golos Text', system-ui, sans-serif;
+  --hand: 'Nanum Pen Script', cursive;
+
+  --pad: clamp(18px, 4vw, 56px);
+  --max: 1200px;
+
+  /* Papier ist fast eckig */
+  --r-paper: 2px;
+  --r-ui: 3px;
+  --r-box: 3px;
+
+  --shadow-paper: 0 1px 0 rgb(42 38 34 / .04), 0 40px 60px -40px rgb(70 50 30 / .55);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: clamp(1rem, .96rem + .2vw, 1.09rem);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+img, svg { display: block; max-width: 100%; height: auto; }
+button, input, textarea, select { font: inherit; color: inherit; }
+::selection { background: var(--beige); }
+:focus-visible { outline: 2px solid var(--pen); outline-offset: 3px; }
+
+a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: .2em; text-decoration-color: var(--taupe); }
+a:hover { text-decoration-color: currentColor; }
+
+h1, h2, h3 { font-family: var(--serif); font-weight: 300; line-height: 1.1; letter-spacing: -.01em; text-wrap: balance; }
+h1 { font-size: clamp(2.4rem, 1.6rem + 3.4vw, 4.4rem); }
+h2 { font-size: clamp(1.9rem, 1.4rem + 2vw, 3.2rem); }
+h3 { font-size: clamp(1.3rem, 1.15rem + .6vw, 1.7rem); font-weight: 400; }
+p { text-wrap: pretty; }
+p + p { margin-top: .85em; }
+strong { font-weight: 600; }
+
+.wrap { max-width: calc(var(--max) + var(--pad) * 2); margin-inline: auto; padding-inline: var(--pad); }
+.block { padding-block: clamp(72px, 10vw, 130px); }
+.measure { max-width: 38em; }
+.intro-text { font-size: clamp(1.1rem, 1.02rem + .4vw, 1.3rem); line-height: 1.55; }
+.muted { color: var(--ink-2); }
+.hand { font-family: var(--hand); color: var(--pen); font-size: 1.7em; line-height: .9; font-weight: 400; }
+
+/* Linie · Punkt · Linie aus dem Logo, als Trenner */
+.rule { display: flex; align-items: center; gap: 14px; color: var(--taupe); }
+.rule::before, .rule::after { content: ''; flex: 1; height: 1.5px; background: currentColor; }
+.rule > i { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+
+/* Buttons: eckig wie Papier, keine Pillen */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: .55em; min-height: 48px; padding: 0 20px; border-radius: var(--r-ui); font-weight: 500; font-size: .97rem; text-decoration: none; border: 1.5px solid var(--ink); cursor: pointer; transition: background-color .2s, color .2s, transform .15s; }
+.btn:active { transform: translateY(1px); }
+.btn-ink { background: var(--ink); color: var(--paper); }
+.btn-ink:hover { background: #000; }
+.btn-line { background: transparent; color: var(--ink); }
+.btn-line:hover { background: var(--ink); color: var(--paper); }
+.btn-sand { background: var(--beige); color: var(--ink); border-color: var(--beige); }
+.btn-sand:hover { background: var(--paper); border-color: var(--paper); }
+
+.skip { position: absolute; left: -9999px; }
+.skip:focus { left: 12px; top: 12px; z-index: 100; background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: var(--r-ui); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
