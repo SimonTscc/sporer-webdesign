@@ -78,7 +78,8 @@ export const aufmass = {
   ],
   extras: [
     { id: 'termin', title: 'Termine online buchen', note: 'Kunden wählen selbst einen freien Termin', price: 120 }, // [SWAP]
-    { id: 'wa', title: 'WhatsApp-Knopf', note: 'Ein Tipp, und die Nachricht an Sie ist offen', price: 0, checked: true },
+    { id: 'social', title: 'Social-Links', note: 'WhatsApp, Instagram, Facebook, TikTok, was Sie eben nutzen', price: 0, checked: true },
+    { id: 'reviews', title: 'Google-Bewertungen auf der Seite', note: 'Ihre Sterne und neuesten Bewertungen, aktualisieren sich von selbst', price: 90 }, // [SWAP]
     { id: 'texte', title: 'Ich schreibe die Texte mit', note: 'Sie erzählen, ich formuliere', price: 90 }, // [SWAP]
     { id: 'fotos', title: 'Fotos aussuchen und bearbeiten', note: 'Aus Ihren eigenen oder passenden lizenzfreien', price: 50 }, // [SWAP]
     { id: 'lang', title: 'Zweite Sprache', note: 'z. B. Englisch für internationale Kunden', price: 150 }, // [SWAP]

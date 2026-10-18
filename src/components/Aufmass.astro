@@ -104,10 +104,11 @@ const b0 = aufmass.branchen[0];
                 <div class="blk on"><b>Kontakt und Anfahrt</b><div class="lines"><i></i><i></i></div></div>
                 <div class="blk" data-o="bTermin"><b>Termin wählen</b><div class="cal">{Array.from({ length: 14 }, (_, i) => <span class={[1, 2, 5, 7, 9, 10, 13].includes(i) ? 'f' : i === 4 ? 'x' : ''}></span>)}</div></div>
                 <div class="blk on" data-o="bHours"><b data-o="hoursT">{b0.hours}</b><div class="lines"><i></i><i></i></div></div>
+                <div class="blk wide" data-o="bReviews"><b><span class="stars">★★★★★</span> 4,9 bei Google · 37 Bewertungen</b><div class="quotes"><i>„Super Beratung, gerne wieder.“</i><i>„Schnell und sauber gearbeitet.“</i></div></div>
               </div>
               <div class="s-pages" data-o="pages"><em>Leistungen</em><em>Über uns</em><em>Preise</em><em>Referenzen</em><em>Kontakt</em></div>
               <div class="app" data-o="app"><div><span>Name</span><span>Ringe</span><span>Platz</span></div><div><span>Mitglied A</span><span>382</span><span>1</span></div><div><span>Mitglied B</span><span>376</span><span>2</span></div></div>
-              <div class="wa on" data-o="waBtn">✆</div>
+              <div class="social on" data-o="social"><i class="wa">✆</i><i class="ig">◎</i><i class="fb">f</i></div>
             </div>
           </div>
           <div class="mini-card" data-o="card"><span data-o="cardName">Ihr Malerbetrieb</span><i></i></div>
@@ -224,8 +225,16 @@ const b0 = aufmass.branchen[0];
   .cal span { height: 11px; background: #efe7da; }
   .cal span.f { background: var(--beige); }
   .cal span.x { background: var(--ink); }
-  .wa { position: absolute; right: 16px; bottom: 16px; width: 30px; height: 30px; border-radius: 50%; background: #2f8f5b; display: none; place-items: center; color: #fff; font-size: 13px; animation: pop .35s ease; }
-  .wa.on { display: grid; }
+  .social { position: absolute; right: 12px; top: 64px; display: none; flex-direction: column; gap: 6px; padding: 6px; background: #fff; border: 1px solid var(--line); border-radius: 16px; animation: pop .35s ease; }
+  .social.on { display: flex; }
+  .social i { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 12px; font-style: normal; font-weight: 700; }
+  .social .wa { background: #2f8f5b; }
+  .social .ig { background: linear-gradient(45deg, #f2a03d, #d6336c 55%, #7b3fbf); }
+  .social .fb { background: #3b5998; font-family: Georgia, serif; }
+  .blk.wide { grid-column: 1 / -1; }
+  .stars { color: #e0a526; letter-spacing: 1px; }
+  .quotes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; color: var(--ink-2); font-size: 10.5px; }
+  .quotes i { font-style: normal; background: #fbf8f2; border: 1px solid var(--line); padding: 5px 7px; }
   .s-pages { display: none; margin-top: 12px; gap: 6px; }
   .s-pages.on { display: flex; }
   .s-pages em { font-style: normal; flex: 1; border: 1px solid var(--line); font-size: 9.5px; color: var(--ink-2); padding: 14px 4px 4px; text-align: center; background: #fbf8f2; }
@@ -329,7 +338,8 @@ const b0 = aufmass.branchen[0];
       o('app').classList.toggle('on', base.value === 'app');
       o('bTermin').classList.toggle('on', on('termin'));
       o('bHours').classList.toggle('on', !on('termin'));
-      o('waBtn').classList.toggle('on', on('wa'));
+      o('social').classList.toggle('on', on('social'));
+      o('bReviews').classList.toggle('on', on('reviews'));
       o('lines').style.display = on('texte') ? 'none' : 'block';
       o('realtext').style.display = on('texte') ? 'block' : 'none';
       o('ph').classList.toggle('photo', on('fotos'));
@@ -353,7 +363,8 @@ const b0 = aufmass.branchen[0];
       multi: () => [o('pages'), root.querySelector<HTMLElement>('.s-nav')!],
       app: () => [o('app')],
       termin: () => [o('bTermin')],
-      wa: () => [o('waBtn')],
+      social: () => [o('social')],
+      reviews: () => [o('bReviews')],
       texte: () => [o('realtext')],
       fotos: () => [o('ph')],
       lang: () => [root.querySelector<HTMLElement>('.s-nav .lang')!],
