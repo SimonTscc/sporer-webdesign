@@ -135,7 +135,7 @@ const short = [
   const wide = matchMedia('(min-width: 821px)');
   const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
   const ease = (t: number) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  let prog = 0, mx = 0, my = 0, queued = false, peek = 0, top = 0, base = 1, lastVw = 0, lastVh = 0;
+  let prog = 0, mx = 0, my = 0, queued = false, peek = 0, top = 0, base = 1, lastVw = 0, lastVh = 0, stageH = 0;
 
   // Größen: nur bei Resize neu rechnen, nicht bei jedem Scroll-Frame
   function sizes() {
@@ -151,6 +151,11 @@ const short = [
     base = Math.max(z.sClosed, z.sOpen);
     lep.style.fontSize = `${(16 * base).toFixed(2)}px`;
     lastVw = innerWidth; lastVh = innerHeight;
+    // Bühnenhöhe in festen Pixeln statt 330vh: In iOS-Safari ändert sich vh, wenn die Adressleiste
+    // ein- und ausfährt. Dann wurde die Seite kürzer/länger, die Scrollposition rutschte und die Karte
+    // klappte hin und her. So bleibt die Höhe stabil, bis sich die Fenstergröße wirklich ändert.
+    stageH = Math.round(lastVh * 3.3);
+    stage.style.height = `${stageH}px`;
   }
 
   function render() {
@@ -181,12 +186,14 @@ const short = [
     const onScroll = () => {
       const r = stage.getBoundingClientRect();
       top = r.top;
-      prog = clamp(-r.top / (r.height - innerHeight));
+      // mit der festen Höhe von oben rechnen, nicht mit der gerade aktuellen innerHeight
+      prog = clamp(-r.top / (stageH - lastVh));
       ask();
     };
-    // Die Adressleiste von Safari ändert beim Scrollen die Höhe: nur bei echter Breitenänderung oder großer Höhenänderung neu layouten
+    // Die Adressleiste von Safari ändert beim Scrollen die Höhe (im neuen Safari um deutlich mehr als 120 px).
+    // Neu layouten nur bei echter Breitenänderung (Drehen, Fenster) oder sehr großer Höhenänderung (Fenster am Desktop).
     const onResize = () => {
-      if (innerWidth !== lastVw || Math.abs(innerHeight - lastVh) > 120) layout();
+      if (innerWidth !== lastVw || Math.abs(innerHeight - lastVh) > 250) layout();
       onScroll();
     };
     layout();
