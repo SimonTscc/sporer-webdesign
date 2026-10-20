@@ -68,8 +68,9 @@ const short = [
   .hint b::after { content: ''; position: absolute; left: 50%; top: 0; width: 9px; height: 9px; margin-left: -4.5px; border-radius: 50%; background: var(--ink); animation: fall 1.6s cubic-bezier(.5, 0, .5, 1) infinite; }
   @keyframes fall { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { transform: translateY(38px); opacity: 0; } }
 
-  /* Alle Maße in em: Das Skript ändert die Schriftgröße statt hochzuskalieren, so bleibt die Karte scharf */
-  .lep { --W: 26.25em; --H: 17em; font-size: 16px; position: relative; width: var(--W); height: var(--H); transform-style: preserve-3d; }
+  /* Alle Maße in em: Das Skript setzt die Schriftgröße nur bei Größenänderung auf die größte Stufe und skaliert beim Scrollen herunter.
+     So bleibt die Karte scharf und Safari muss beim Scrollen kein Layout neu berechnen. */
+  .lep { --W: 26.25em; --H: 17em; font-size: 16px; position: relative; width: var(--W); height: var(--H); transform-style: preserve-3d; will-change: transform; }
   .panel { position: absolute; top: 0; left: 0; width: var(--W); height: var(--H); transform-style: preserve-3d; }
   .p1 { left: calc(var(--W) * -1); transform-origin: right center; }
   .p3 { left: var(--W); transform-origin: left center; }
@@ -134,12 +135,27 @@ const short = [
   const wide = matchMedia('(min-width: 821px)');
   const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
   const ease = (t: number) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  let prog = 0, mx = 0, my = 0, queued = false, peek = 0;
+  let prog = 0, mx = 0, my = 0, queued = false, peek = 0, top = 0, base = 1, lastVw = 0, lastVh = 0;
+
+  // Größen: nur bei Resize neu rechnen, nicht bei jedem Scroll-Frame
+  function sizes() {
+    const vert = !wide.matches;
+    const W = vert ? 330 : 420, H = vert ? 240 : (W * 55) / 85;
+    const vw = innerWidth, vh = innerHeight;
+    const sClosed = vert ? Math.min((vw * .9) / W, 1.1) : Math.min(1.45, (vw * .58) / W, (vh * .44) / H);
+    const sOpen = vert ? Math.min((vw * .92) / W, ((vh - 40) * .94) / (3 * H)) : Math.min(1.12, (vw * .92) / (3 * W), (vh * .7) / H);
+    return { vert, W, H, sClosed, sOpen };
+  }
+  function layout() {
+    const z = sizes();
+    base = Math.max(z.sClosed, z.sOpen);
+    lep.style.fontSize = `${(16 * base).toFixed(2)}px`;
+    lastVw = innerWidth; lastVh = innerHeight;
+  }
 
   function render() {
     queued = false;
-    const vert = !wide.matches;
-    const W = vert ? 330 : 420, H = vert ? 240 : (W * 55) / 85;
+    const { vert, W, H, sClosed, sOpen } = sizes();
     const kScroll = ease(clamp((prog - .08) / .32)); // Karte aufklappen
     const k1 = prog < .02 ? peek : kScroll;           // am Anfang lupft sich die Karte ein Stück
     const k2 = ease(clamp((prog - .42) / .32)); // dritte Seite ausklappen
@@ -147,19 +163,15 @@ const short = [
     p1.style.transform = `translateZ(2px) rotate${ax}(${sg * (180 - 180 * k1)}deg)`;
     p3.style.transform = `translateZ(-2px) rotate${ax}(${sg * (-180 + 180 * k2)}deg)`;
     p3.style.opacity = k1 > .98 ? '1' : '0';
-    const vw = innerWidth, vh = innerHeight;
-    const sClosed = vert ? Math.min((vw * .9) / W, 1.1) : Math.min(1.45, (vw * .58) / W, (vh * .44) / H);
-    const sOpen = vert ? Math.min((vw * .92) / W, ((vh - 40) * .94) / (3 * H)) : Math.min(1.12, (vw * .92) / (3 * W), (vh * .7) / H);
     const s = sClosed + (sOpen - sClosed) * ease(clamp((prog - .08) / .66));
     // sichtbare Mitte halten: zu nur die Karte, halb offen zwei Felder, ganz offen drei
     const shift = (vert ? H / 2 : W / 2) * (kScroll - k2);
     const tilt = vert ? 0 : 1 - k1 * .7;
-    const move = vert ? `translateY(${shift / 16}em)` : `translateX(${shift / 16}em)`;
-    lep.style.fontSize = `${(16 * s).toFixed(2)}px`;
-    lep.style.transform = `${move} rotateX(${my * 6 * tilt}deg) rotateY(${mx * 8 * tilt}deg)`;
+    const move = vert ? `translateY(${(shift * s).toFixed(2)}px)` : `translateX(${(shift * s).toFixed(2)}px)`;
+    lep.style.transform = `${move} scale(${(s / base).toFixed(4)}) rotateX(${my * 6 * tilt}deg) rotateY(${mx * 8 * tilt}deg)`;
     hint.style.opacity = prog > .8 ? '0' : '1';
     // ganz oben schiebt die Kopfzeile die Bühne nach unten: Hinweis trotzdem im Bild halten
-    hint.style.transform = `translateY(${-Math.max(0, stage.getBoundingClientRect().top)}px)`;
+    hint.style.transform = `translateY(${-Math.max(0, top)}px)`;
     intro.style.opacity = prog > .06 ? '0' : '1';
   }
   const ask = () => { if (!queued) { queued = true; requestAnimationFrame(render); } };
@@ -168,11 +180,18 @@ const short = [
   else {
     const onScroll = () => {
       const r = stage.getBoundingClientRect();
+      top = r.top;
       prog = clamp(-r.top / (r.height - innerHeight));
       ask();
     };
+    // Die Adressleiste von Safari ändert beim Scrollen die Höhe: nur bei echter Breitenänderung oder großer Höhenänderung neu layouten
+    const onResize = () => {
+      if (innerWidth !== lastVw || Math.abs(innerHeight - lastVh) > 120) layout();
+      onScroll();
+    };
+    layout();
     addEventListener('scroll', onScroll, { passive: true });
-    addEventListener('resize', onScroll);
+    addEventListener('resize', onResize);
     addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; mx = e.clientX / innerWidth - .5; my = -(e.clientY / innerHeight - .5); ask(); });
     onScroll();
     // Alle 3 Sekunden hebt sich die Vorderseite kurz an, solange noch nicht gescrollt wurde
