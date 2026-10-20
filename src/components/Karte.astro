@@ -135,7 +135,9 @@ const short = [
   const wide = matchMedia('(min-width: 821px)');
   const clamp = (v: number, a = 0, b = 1) => Math.max(a, Math.min(b, v));
   const ease = (t: number) => (t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-  let prog = 0, mx = 0, my = 0, queued = false, peek = 0, top = 0, base = 1, lastVw = 0, lastVh = 0, stageH = 0;
+  let prog = 0, target = 0, mx = 0, my = 0, queued = false, peek = 0, top = 0, base = 1, lastVw = 0, lastVh = 0, stageH = 0, stageTop = 0;
+  let dims: ReturnType<typeof sizes>;
+  const touch = matchMedia('(pointer: coarse)').matches;
 
   // Größen: nur bei Resize neu rechnen, nicht bei jedem Scroll-Frame
   function sizes() {
@@ -147,7 +149,7 @@ const short = [
     return { vert, W, H, sClosed, sOpen };
   }
   function layout() {
-    const z = sizes();
+    const z = (dims = sizes());
     base = Math.max(z.sClosed, z.sOpen);
     lep.style.fontSize = `${(16 * base).toFixed(2)}px`;
     lastVw = innerWidth; lastVh = innerHeight;
@@ -156,11 +158,18 @@ const short = [
     // klappte hin und her. So bleibt die Höhe stabil, bis sich die Fenstergröße wirklich ändert.
     stageH = Math.round(lastVh * 3.3);
     stage.style.height = `${stageH}px`;
+    // Lage der Bühne im Dokument einmal messen; beim Scrollen zählt nur noch scrollY
+    stageTop = stage.getBoundingClientRect().top + scrollY;
   }
 
   function render() {
     queued = false;
-    const { vert, W, H, sClosed, sOpen } = sizes();
+    // Weich zum Ziel nachziehen: Ein, zwei verirrte Werte (z. B. während Safari die Leiste umschaltet)
+    // klappen die Karte so nicht mehr sichtbar zu
+    prog += (target - prog) * .45;
+    if (Math.abs(target - prog) < .0005) prog = target;
+    else ask();
+    const { vert, W, H, sClosed, sOpen } = dims;
     const kScroll = ease(clamp((prog - .08) / .32)); // Karte aufklappen
     const k1 = prog < .02 ? peek : kScroll;           // am Anfang lupft sich die Karte ein Stück
     const k2 = ease(clamp((prog - .42) / .32)); // dritte Seite ausklappen
@@ -183,17 +192,18 @@ const short = [
 
   if (still) stage.classList.add('static');
   else {
+    // Fortschritt nur aus der Scrollposition der Seite und fest gemessenen Werten. Die Lage auf dem
+    // Bildschirm (getBoundingClientRect) wackelt in iOS-Safari, während die Adressleiste umschaltet.
     const onScroll = () => {
-      const r = stage.getBoundingClientRect();
-      top = r.top;
-      // mit der festen Höhe von oben rechnen, nicht mit der gerade aktuellen innerHeight
-      prog = clamp(-r.top / (stageH - lastVh));
+      const y = scrollY;
+      top = stageTop - y;
+      target = clamp((y - stageTop) / (stageH - lastVh));
       ask();
     };
-    // Die Adressleiste von Safari ändert beim Scrollen die Höhe (im neuen Safari um deutlich mehr als 120 px).
-    // Neu layouten nur bei echter Breitenänderung (Drehen, Fenster) oder sehr großer Höhenänderung (Fenster am Desktop).
+    // Handy/Tablet: nur beim Drehen neu layouten, Höhenänderungen kommen dort von der Adressleiste.
+    // Desktop: auch bei deutlicher Höhenänderung des Fensters.
     const onResize = () => {
-      if (innerWidth !== lastVw || Math.abs(innerHeight - lastVh) > 250) layout();
+      if (innerWidth !== lastVw || (!touch && Math.abs(innerHeight - lastVh) > 120)) layout();
       onScroll();
     };
     layout();
@@ -201,6 +211,11 @@ const short = [
     addEventListener('resize', onResize);
     addEventListener('pointermove', (e) => { if (e.pointerType !== 'mouse') return; mx = e.clientX / innerWidth - .5; my = -(e.clientY / innerHeight - .5); ask(); });
     onScroll();
+    prog = target; // beim Laden nicht animiert hinziehen
+    // Schriften und Bilder verschieben die Bühne beim Laden noch etwas: danach neu messen
+    const remeasure = () => { stageTop = stage.getBoundingClientRect().top + scrollY; onScroll(); };
+    document.fonts?.ready.then(remeasure);
+    addEventListener('load', remeasure);
     // Alle 3 Sekunden hebt sich die Vorderseite kurz an, solange noch nicht gescrollt wurde
     const t0 = performance.now();
     const loop = (t: number) => {
