@@ -327,11 +327,14 @@ const b0 = aufmass.branchen[0];
       const base = root.querySelector<HTMLInputElement>('input[name="am-base"]:checked')!;
       let total = Number(base.dataset.price), monthly = 0;
       const extras: string[] = [];
+      // Für die Mail: Extras und „Nach dem Start“ getrennt, jeweils mit Preis
+      const posten: { label: string; price: number; monthly: number; after: boolean }[] = [];
       root.querySelectorAll<HTMLInputElement>('.rows input[type=checkbox], input[name="am-after"]:checked').forEach((c) => {
         if (!c.checked) return;
         total += Number(c.dataset.price ?? 0);
         monthly += Number(c.dataset.monthly ?? 0);
         extras.push(label(c));
+        posten.push({ label: label(c), price: Number(c.dataset.price ?? 0), monthly: Number(c.dataset.monthly ?? 0), after: c.name === 'am-after' });
       });
 
       root.querySelectorAll<HTMLElement>('.s-nav .multi').forEach((e) => (e.style.display = base.value === 'multi' ? 'inline' : 'none'));
@@ -359,7 +362,7 @@ const b0 = aufmass.branchen[0];
       o('sum2').textContent = sumText;
       o('monthly').textContent = monthly ? `dazu ${monthly} € im Monat, monatlich kündbar` : 'einmalig, keine laufenden Kosten';
 
-      return { name, branche: isOther ? `Sonstiges: ${otherText || 'nicht angegeben'}` : brSel.selectedOptions[0].text, base: label(base), extras, total, monthly, unsure };
+      return { name, branche: isOther ? `Sonstiges: ${otherText || 'nicht angegeben'}` : brSel.selectedOptions[0].text, base: label(base), basePrice: Number(base.dataset.price), extras, posten, total, monthly, unsure };
     }
 
     // Was in der Skizze zu welcher Auswahl gehört
@@ -432,16 +435,30 @@ const b0 = aufmass.branchen[0];
       const c = update();
       mailBtn.disabled = true; mailBtn.textContent = 'Wird gesendet …';
       try {
-        await sendMail(root.dataset.to ?? '', `Aufmaß: ${c.name || c.branche}, ${c.unsure ? 'Beratung gewünscht' : `ab ${fmt(c.total)}`}`, {
-          Name: k('lname').value.trim(),
-          email: k('lcontact').value.trim(),
-          Telefon: k('ltel').value.trim(),
-          Betrieb: `${c.name || '–'} (${c.branche})`,
-          Umfang: c.base,
-          Extras: c.extras.join(', ') || 'nichts',
-          Richtwert: `${c.unsure ? 'nach Gespräch' : `ab ${fmt(c.total)}`}${c.monthly ? ` + ${c.monthly} € / Monat` : ''}`,
-          Nachricht: k<HTMLTextAreaElement>('lmsg').value.trim(),
-        });
+        // Feldnamen sind die Überschriften in der Mail, Reihenfolge = Reihenfolge in der Mail.
+        // Leere Felder fallen weg, damit die Mail aufgeräumt bleibt.
+        const preis = (p: { price: number; monthly: number }) =>
+          p.monthly ? `${p.monthly} € im Monat` : p.price ? `+ ${fmt(p.price)}` : 'inklusive';
+        const extras = c.posten.filter((p) => !p.after);
+        const nachher = c.posten.find((p) => p.after);
+        const now = new Date();
+        const felder: Record<string, string> = {
+          'Name': k('lname').value.trim(),
+          'E-Mail': k('lcontact').value.trim(),
+          'Telefon': k('ltel').value.trim(),
+          'Betrieb': c.name ? `${c.name} (${c.branche})` : c.branche,
+          'Umfang': c.unsure ? `${c.base} (Beratung gewünscht)` : `${c.base}: ${fmt(c.basePrice)}`,
+          'Extras': extras.map((p) => `${p.label} (${preis(p)})`).join(' · ') || 'keine',
+          'Nach dem Start': nachher ? `${nachher.label} (${preis(nachher)})` : '',
+          'Richtwert einmalig': c.unsure ? 'nach Gespräch' : `ab ${fmt(c.total)}`,
+          'Laufende Kosten': c.monthly ? `${c.monthly} € im Monat, monatlich kündbar` : 'keine',
+          'Nachricht': k<HTMLTextAreaElement>('lmsg').value.trim(),
+          'Gesendet': `${now.toLocaleDateString('de-DE')}, ${now.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })} Uhr`,
+          _replyto: k('lcontact').value.trim(),
+        };
+        Object.keys(felder).forEach((f) => { if (!felder[f]) delete felder[f]; });
+        const wer = k('lname').value.trim() + (c.name ? `, ${c.name}` : '');
+        await sendMail(root.dataset.to ?? '', `Neue Anfrage von ${wer}: ${c.base}, ${c.unsure ? 'Beratung gewünscht' : `ab ${fmt(c.total)}`}`, felder);
         o('lead').hidden = true;
         o('done').hidden = false;
       } catch {

@@ -5,7 +5,8 @@ export async function sendMail(to: string, subject: string, fields: Record<strin
   const res = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(to)}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-    body: JSON.stringify({ ...fields, _subject: subject, _template: 'table', _captcha: 'false' }),
+    // Vorlage „box“: jedes Feld als eigener Block mit Überschrift, liest sich auch am Handy gut
+    body: JSON.stringify({ ...fields, _subject: subject, _template: 'box', _captcha: 'false' }),
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || `Fehler ${res.status}`);
