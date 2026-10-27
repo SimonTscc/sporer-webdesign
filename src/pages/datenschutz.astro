@@ -3,25 +3,45 @@ import Legal from '../components/Legal.astro';
 import { site, isPreview } from '../data/site';
 ---
 <Legal title="Datenschutz">
-  {isPreview && <p class="todo">[SWAP] Vorlage: Hosting-Anbieter eintragen und die Erklärung vor dem Livegang mit einem Generator (z. B. e-recht24) oder einer Fachperson abgleichen.</p>}
+  {isPreview && <p class="todo">Vorschau: Diese Seite ist noch nicht live.</p>}
 
   <h2>1. Verantwortlicher</h2>
+  <p>Verantwortlich für die Datenverarbeitung auf dieser Website ist:</p>
   <p>{site.owner} · {site.name}<br />{site.street}, {site.zip} {site.city}<br />E-Mail: <a href={`mailto:${site.email}`}>{site.email}</a>{site.phone && ` · Telefon: ${site.phone}`}</p>
 
   <h2>2. Grundsätze</h2>
-  <p>Diese Website kommt ohne Cookies, ohne Tracking und ohne Analyse-Tools aus. Schriften werden lokal von diesem Server geladen; es findet keine Verbindung zu Google Fonts oder anderen Drittanbietern statt.</p>
+  <p>Ich verarbeite personenbezogene Daten nur, soweit das für den Betrieb dieser Website und für die Beantwortung Ihrer Anfragen nötig ist. Diese Website setzt keine Cookies, nutzt kein Tracking und keine Analyse-Tools. Schriften werden zusammen mit der Seite ausgeliefert; es besteht keine Verbindung zu Google Fonts oder ähnlichen Diensten.</p>
 
   <h2>3. Hosting und Server-Logfiles</h2>
-  <p>Diese Website wird bei <strong>[SWAP: Hosting-Anbieter, Anschrift]</strong> gehostet. Beim Aufruf der Seite verarbeitet der Hoster technisch notwendige Daten (IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, Browser-Typ) in Server-Logfiles. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; das berechtigte Interesse liegt im sicheren und stabilen Betrieb der Website. Die Logfiles werden nach kurzer Zeit gelöscht.</p>
+  <p>Diese Website wird über GitHub Pages gehostet, einen Dienst der GitHub Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA (Tochter der Microsoft Corporation). Beim Aufruf der Seite verarbeitet GitHub technisch notwendige Daten wie IP-Adresse, Datum und Uhrzeit, aufgerufene Seite, Referrer und Browser-Typ, um die Seite auszuliefern und vor Missbrauch zu schützen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; mein berechtigtes Interesse liegt in einer sicheren, schnellen und stabilen Bereitstellung der Website.</p>
+  <p>Dabei können Daten in die USA übertragen werden. GitHub ist unter dem EU-US Data Privacy Framework zertifiziert, auf dessen Grundlage die EU-Kommission ein angemessenes Datenschutzniveau festgestellt hat (Art. 45 DSGVO). Weitere Informationen: <a href="https://docs.github.com/de/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">Datenschutzerklärung von GitHub</a>.</p>
 
-  <h2>4. Kontaktaufnahme</h2>
-  <p>Wenn Sie ein Kontaktformular absenden, werden Ihre Angaben (Name, E-Mail, ggf. Telefon und Nachricht) über den Dienst FormSubmit (formsubmit.co) per E-Mail an mich weitergeleitet. Dabei können Daten in die USA übertragen werden. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Anfrage vor einem möglichen Auftrag). Ich nutze die Angaben nur, um Ihre Anfrage zu beantworten. <strong>[SWAP: prüfen lassen, ob ein Auftragsverarbeitungsvertrag nötig ist oder ein EU-Dienst besser passt]</strong></p>
-  <h3>E-Mail und Telefon</h3>
-  <p>Wenn Sie mich per E-Mail oder Telefon kontaktieren, verarbeite ich Ihre Angaben zur Bearbeitung der Anfrage (Art. 6 Abs. 1 lit. b DSGVO). Die Daten werden gelöscht, sobald sie nicht mehr benötigt werden, sofern keine gesetzlichen Aufbewahrungspflichten bestehen.</p>
-  <h3>WhatsApp</h3>
-  <p>Wenn Sie den WhatsApp-Link nutzen, gelten zusätzlich die Datenschutzbestimmungen der WhatsApp Ireland Ltd. (Meta). Dabei können Daten in Drittländer übertragen werden. Wenn Sie das nicht möchten, nutzen Sie bitte E-Mail oder Telefon.</p>
+  <h2>4. SSL-/TLS-Verschlüsselung</h2>
+  <p>Diese Seite nutzt aus Sicherheitsgründen eine verschlüsselte Verbindung (HTTPS). Daten, die Sie an mich übermitteln, können so nicht von Dritten mitgelesen werden.</p>
 
-  <h2>5. Ihre Rechte</h2>
-  <p>Sie haben das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch (Art. 15–21 DSGVO). Außerdem können Sie sich bei einer Aufsichtsbehörde beschweren, in Baden-Württemberg beim Landesbeauftragten für den Datenschutz und die Informationsfreiheit.</p>
+  <h2>5. Anfrage über das Aufmaß-Formular</h2>
+  <p>Wenn Sie das Aufmaß-Formular absenden, werden Ihre Angaben (Name, E-Mail-Adresse, ggf. Telefonnummer, Ihre Auswahl und Ihre Nachricht) über den Dienst FormSubmit (formsubmit.co) per E-Mail an mich weitergeleitet. FormSubmit sitzt außerhalb der EU; dabei können Daten in die USA bzw. in Drittländer übertragen werden, für die kein Angemessenheitsbeschluss vorliegt. Wenn Sie das nicht möchten, schreiben Sie mir bitte direkt eine E-Mail.</p>
+  <p>Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (Anfrage vor einem möglichen Vertrag). Ich nutze die Angaben nur, um Ihre Anfrage zu beantworten und gegebenenfalls ein Angebot zu erstellen. Die Bereitstellung ist freiwillig; ohne Name und E-Mail-Adresse kann ich Ihnen aber nicht antworten.</p>
 
+  <h2>6. Kontakt per E-Mail{site.phone && ' oder Telefon'}</h2>
+  <p>Wenn Sie mir eine E-Mail schreiben{site.phone && ' oder mich anrufen'}, verarbeite ich Ihre Angaben zur Bearbeitung der Anfrage (Art. 6 Abs. 1 lit. b DSGVO, bei sonstigen Anliegen Art. 6 Abs. 1 lit. f DSGVO). Mein E-Mail-Postfach wird bei Titan (titan.email) betrieben.</p>
+  {site.whatsapp && <>
+    <h3>WhatsApp</h3>
+    <p>Wenn Sie den WhatsApp-Link nutzen, gelten zusätzlich die Datenschutzbestimmungen der WhatsApp Ireland Ltd. (Meta). Dabei können Daten in Drittländer übertragen werden. Wenn Sie das nicht möchten, nutzen Sie bitte E-Mail{site.phone && ' oder Telefon'}.</p>
+  </>}
+
+  <h2>7. Speicherdauer</h2>
+  <p>Anfragen lösche ich, sobald sie erledigt sind und kein Auftrag zustande kommt, spätestens nach sechs Monaten. Kommt ein Auftrag zustande, bewahre ich die Unterlagen so lange auf, wie es die gesetzlichen Aufbewahrungspflichten verlangen (in der Regel sechs bzw. zehn Jahre nach HGB und AO).</p>
+
+  <h2>8. Links zu anderen Websites</h2>
+  <p>Diese Seite enthält Links zu Websites von Kunden und gegebenenfalls zu sozialen Netzwerken. Erst wenn Sie einen solchen Link anklicken, werden Daten an den jeweiligen Anbieter übertragen; dafür gilt dessen Datenschutzerklärung.</p>
+
+  <h2>9. Ihre Rechte</h2>
+  <p>Sie haben jederzeit das Recht auf Auskunft über Ihre gespeicherten Daten (Art. 15 DSGVO), auf Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18) und Datenübertragbarkeit (Art. 20). Eine Mail an <a href={`mailto:${site.email}`}>{site.email}</a> genügt.</p>
+  <p><strong>Widerspruchsrecht:</strong> Soweit ich Daten auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO verarbeite, können Sie dieser Verarbeitung aus Gründen, die sich aus Ihrer besonderen Situation ergeben, jederzeit widersprechen (Art. 21 DSGVO).</p>
+
+  <h2>10. Beschwerderecht</h2>
+  <p>Sie können sich bei einer Datenschutz-Aufsichtsbehörde beschweren. Für mich zuständig ist der Landesbeauftragte für den Datenschutz und die Informationsfreiheit Baden-Württemberg, Lautenschlagerstraße 20, 70173 Stuttgart, <a href="https://www.baden-wuerttemberg.datenschutz.de" rel="noopener">www.baden-wuerttemberg.datenschutz.de</a>.</p>
+
+  <p><small>Stand: Oktober 2026</small></p>
 </Legal>

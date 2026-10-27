@@ -44,7 +44,7 @@ export const prices = [
   { item: 'Website mit mehreren Seiten', note: 'bis etwa sechs Unterseiten', price: 'ab 890 €' },
   { item: 'Web-App', note: 'je nach Umfang', price: 'ab 1.190 €' },
   { item: 'Visitenkarten, Flyer, Briefpapier', note: 'druckfertige PDF', price: 'ab 69 €' },
-  { item: 'Hosting und Betreuung', note: 'monatlich kündbar', price: '15 € / Monat' },
+  { item: 'Hosting und Betreuung', note: 'monatlich kündbar', price: '45 € / Monat' },
   { item: 'Oder: eigener Admin-Bereich', note: 'Inhalte selbst pflegen, einmalig statt monatlich', price: 'ab 490 €' },
 ];
 
@@ -87,7 +87,7 @@ export const aufmass = {
   ],
   // Nach dem Start: eins von dreien
   after: [
-    { id: 'care', title: 'Ich kümmere mich danach', note: 'Hosting, Domain, E-Mail, und kleine Änderungen mache ich für Sie', monthly: 15, checked: true },
+    { id: 'care', title: 'Ich kümmere mich danach', note: 'Hosting, Domain, E-Mail, und kleine Änderungen mache ich für Sie', monthly: 45, checked: true },
     { id: 'admin', title: 'Eigener Admin-Bereich', note: 'Sie ändern Texte, Preise und Bilder selbst und sind unabhängig von mir', price: 490 }, // [SWAP]
     { id: 'none', title: 'Ich kümmere mich selbst', note: 'Sie bekommen alle Dateien und hosten selbst' },
   ],

@@ -1,7 +1,8 @@
 // Zentrale Firmendaten. Alles mit [SWAP] vor dem Livegang prüfen bzw. ersetzen.
 
-// [SWAP] Solange true: Seite ist für Suchmaschinen gesperrt (noindex + robots.txt Disallow).
-export const isPreview = true;
+// Solange true: Seite ist für Suchmaschinen gesperrt (noindex + robots.txt Disallow).
+// Live seit 2026-10-27 unter sporer-webdesign.de.
+export const isPreview = false;
 
 export const site = {
   name: 'Sporer Webdesign',
@@ -9,7 +10,7 @@ export const site = {
   claim: 'Websites, die bleiben.',
   description:
     'Webdesign aus Stuttgart: individuelle Websites und Web-Apps für Selbstständige, Vereine und kleine Unternehmen. Ruhiges Design, schnelle Technik, persönliche Betreuung.',
-  url: 'https://sporer-webdesign.de', // [SWAP] Domain
+  url: 'https://sporer-webdesign.de',
   email: 'info@sporer-webdesign.de',
   // [SWAP] Geschäftsnummer, sobald die zweite Nummer da ist. Leer = Telefon und WhatsApp werden
   // überall ausgeblendet (Kopf, Karte, Aufmaß, unten, Fußzeile, Impressum).
@@ -20,9 +21,9 @@ export const site = {
   // Erst die eigene Adresse eintragen, einmal absenden, Bestätigungsmail anklicken, dann hier den
   // Zufallscode aus der FormSubmit-Mail eintragen, damit die Adresse nicht öffentlich im Code steht.
   formTo: 'd301b39892b2db0b90c7645825ad99e0', // FormSubmit-Code für info@sporer-webdesign.de
-  street: 'Musterstraße 1', // [SWAP]
-  zip: '70000', // [SWAP]
-  city: 'Stuttgart', // [SWAP]
+  street: 'Mittenfeldstraße 79',
+  zip: '70499',
+  city: 'Stuttgart',
   region: 'Stuttgart & Umgebung · deutschlandweit remote',
   taxNote: 'Kleinunternehmer gem. § 19 UStG, es wird keine Umsatzsteuer ausgewiesen.', // [SWAP] nur falls zutreffend
   instagram: '', // [SWAP] z. B. https://www.instagram.com/sporer.webdesign/
