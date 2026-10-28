@@ -10,6 +10,8 @@ const CHROME = 'C:/Program Files/Google/Chrome/Application/chrome.exe';
 const OUT = resolve(dirname(fileURLToPath(import.meta.url)), '../src/assets/work');
 const VAULT = 'C:/Users/Simon/Documents/Obsidian Vault/02 Projekte';
 const PROJECTS = [
+  // Astro-Seite mit Unterpfad: direkt von der Vorschau-Adresse statt über den Mini-Server
+  { slug: 'hildes-pfotenkueche', url: 'https://simontscc.github.io/hildes-pfotenkueche/' },
   { slug: 'srh-wheels', root: `${VAULT}/Website/V2` },
   { slug: 'flame-n-go', root: 'C:/Users/Simon/Documents/Obsidian Vault/02 Projekte/Flame n Go/Code/dist' },
   { slug: 'paul-scheifel', root: `${VAULT}/Paul Scheifel` },
@@ -32,17 +34,17 @@ const only = process.argv.slice(2);
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: true });
 for (const p of PROJECTS) {
   if (only.length && !only.includes(p.slug)) continue;
-  const srv = await serve(p.root);
+  const srv = p.url ? null : await serve(p.root);
   const page = await browser.newPage();
   const W = p.mobile ? 390 : 1440, H = p.mobile ? 844 : 900;
   await page.setViewport({ width: W, height: H, deviceScaleFactor: p.mobile ? 2 : 1, isMobile: !!p.mobile, hasTouch: !!p.mobile });
-  await page.goto(`http://localhost:${srv.address().port}/`, { waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
+  await page.goto(p.url ?? `http://localhost:${srv.address().port}/`, { waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
   // Einmal durchscrollen, damit Scroll-Animationen ausgelöst werden
   await page.evaluate(async () => { for (let y = 0; y < 3200; y += 300) { scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); } scrollTo(0, 0); });
   await new Promise(r => setTimeout(r, 1500));
   const h = Math.min(p.mobile ? H : 2700, await page.evaluate(() => document.documentElement.scrollHeight));
   await page.screenshot({ path: `${OUT}/${p.slug}.png`, clip: { x: 0, y: 0, width: W, height: h }, captureBeyondViewport: true });
   console.log('✓', p.slug, h);
-  await page.close(); srv.close();
+  await page.close(); srv?.close();
 }
 await browser.close();

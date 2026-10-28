@@ -6,6 +6,7 @@ import flame from '../assets/work/flame-n-go.png';
 import paul from '../assets/work/paul-scheifel.png';
 import liga from '../assets/work/schuetzen-liga.png';
 import vm from '../assets/work/schuetzen-vm.png';
+import hilde from '../assets/work/hildes-pfotenkueche.png';
 
 export type Project = {
   slug: string;
@@ -22,6 +23,21 @@ export type Project = {
 };
 
 export const projects: Project[] = [
+  {
+    slug: 'hildes-pfotenkueche',
+    client: 'Hildes Pfotenküche',
+    kind: 'Website mit Logo',
+    year: '2026',
+    place: 'online',
+    summary:
+      'Hilde berät Hundehalter zur Rohfütterung und schreibt Futterpläne für jeden Hund einzeln. Die Seite erklärt das Angebot und lässt Besucher selbst einen Napf befüllen.',
+    images: [hilde],
+    body: [
+      { h: 'Ausgangslage', p: 'Hilde verkauft kein Futter, sondern Beratung und Futterpläne. Die Seite sollte zeigen, welche Pläne es gibt, wie eine Beratung abläuft, und Hundehalter zu einer Anfrage bringen.' },
+      { h: 'Was ich gemacht habe', p: 'Eine Website mit Unterseiten für die Futterpläne, die Beratung und Hilde selbst, dazu das Logo und die Farben. Auf der Startseite steht ein kleines Spiel: Besucher ziehen Zutaten in Hildes Napf. Die richtigen Bausteine bleiben drin, Schokolade, Zwiebeln oder gekochte Knochen fliegen mit einer kurzen Erklärung wieder raus. Ist der Napf voll, geht es direkt zur Anfrage.' },
+    ],
+    built: 'Astro, TypeScript, GitHub Pages',
+  },
   {
     slug: 'flame-n-go',
     client: 'Flame n Go Keramik',
