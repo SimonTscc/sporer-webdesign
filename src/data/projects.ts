@@ -72,7 +72,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'schuetzen-apps',
-    client: 'Sportschützenverein Stuttgart-Untertürkheim',
+    client: 'Sportschützenverein aus Stuttgart',
     kind: 'Zwei Web-Apps',
     year: '2026',
     place: 'Stuttgart',

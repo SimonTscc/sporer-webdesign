@@ -15,8 +15,9 @@ const PROJECTS = [
   { slug: 'srh-wheels', root: `${VAULT}/Website/V2` },
   { slug: 'flame-n-go', root: 'C:/Users/Simon/Documents/Obsidian Vault/02 Projekte/Flame n Go/Code/dist' },
   { slug: 'paul-scheifel', root: `${VAULT}/Paul Scheifel` },
-  { slug: 'schuetzen-liga', root: 'C:/Users/Simon/Documents/Obsidian Vault/02 Projekte/Schuss-Tracker/schuetzen-liga-ergebnisse-v2', mobile: true },
-  { slug: 'schuetzen-vm', root: 'C:/Users/Simon/Documents/Obsidian Vault/02 Projekte/Vereinsmeisterschaft/schuetzen-vereinsmeisterschaft', mobile: true },
+  // anonym: Vereinsname ohne Ortsteil, Wappen unkenntlich (Simons Wunsch)
+  { slug: 'schuetzen-liga', root: 'C:/Users/Simon/Documents/Obsidian Vault/02 Projekte/Schuss-Tracker/schuetzen-liga-ergebnisse-v2', mobile: true, anonym: true },
+  { slug: 'schuetzen-vm', root: 'C:/Users/Simon/Documents/Obsidian Vault/02 Projekte/Vereinsmeisterschaft/schuetzen-vereinsmeisterschaft', mobile: true, anonym: true },
 ];
 const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.jpg': 'image/jpeg',
   '.webp': 'image/webp', '.svg': 'image/svg+xml', '.woff2': 'font/woff2', '.woff': 'font/woff', '.mp4': 'video/mp4', '.json': 'application/json' };
@@ -39,6 +40,11 @@ for (const p of PROJECTS) {
   const W = p.mobile ? 390 : 1440, H = p.mobile ? 844 : 900;
   await page.setViewport({ width: W, height: H, deviceScaleFactor: p.mobile ? 2 : 1, isMobile: !!p.mobile, hasTouch: !!p.mobile });
   await page.goto(p.url ?? `http://localhost:${srv.address().port}/`, { waitUntil: 'networkidle2', timeout: 30000 }).catch(() => {});
+  if (p.anonym) await page.evaluate(() => {
+    document.getElementById('authOverlay')?.remove(); // VM zeigt lokal den Vereinslogin, die Startseite liegt darunter
+    document.querySelectorAll('.home-club').forEach(el => { el.textContent = 'Sportschützenverein Stuttgart'; });
+    document.querySelectorAll('.home-logo').forEach(el => { el.style.filter = 'blur(9px)'; });
+  });
   // Einmal durchscrollen, damit Scroll-Animationen ausgelöst werden
   await page.evaluate(async () => { for (let y = 0; y < 3200; y += 300) { scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); } scrollTo(0, 0); });
   await new Promise(r => setTimeout(r, 1500));
