@@ -51,7 +51,7 @@ export const prices = [
 export const faq = [
   {
     q: 'Wie lange dauert eine Website?',
-    a: 'Eine einzelne Seite ist meistens nach zwei bis drei Wochen online, eine größere nach vier bis sechs. Am meisten hängt davon ab, wie schnell Texte und Fotos da sind.',
+    a: 'Eine einzelne Seite ist meistens nach zwei bis drei Wochen online, eine Website mit mehreren Unterseiten nach vier bis sechs Wochen. Einen groben Zeitplan bekommen Sie schon mit dem Angebot. Haben Sie einen festen Termin, zum Beispiel eine Eröffnung, plane ich von diesem Datum aus rückwärts. Am schnellsten geht es, wenn Texte und Fotos früh bei mir sind.',
   },
   {
     q: 'Kann ich später selbst etwas ändern?',
