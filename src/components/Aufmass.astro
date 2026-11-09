@@ -256,6 +256,9 @@ const b0 = aufmass.branchen[0];
   /* Hervorhebung des zuletzt geänderten Teils */
   .hl { outline: 2.5px solid var(--pen) !important; outline-offset: 3px; animation: hl 1.8s ease forwards; position: relative; z-index: 2; }
   @keyframes hl { 0% { outline-color: var(--pen); background-color: rgb(43 76 155 / .14); } 70% { outline-color: var(--pen); } 100% { outline-color: transparent; background-color: transparent; } }
+  /* Schwebende Teile behalten beim Hervorheben ihre Lage, sonst rutschen sie aus der Skizze */
+  .social.hl { position: absolute; }
+  .mini-card.hl { position: absolute; z-index: 3; }
   .care-tag { display: none; margin-left: 8px; font-size: 10px; color: #fff; background: #5f8a4a; padding: 2px 6px; border-radius: 2px; white-space: nowrap; }
   .care-tag.on { display: inline-block; }
   .admin-tag { background: var(--pen); }
